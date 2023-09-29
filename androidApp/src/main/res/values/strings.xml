@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="progress">Progress</string>
+    <string name="prescriptions">Prescriptions</string>
+    <string name="documents">Documents</string>
+    <string name="profile">Profile</string>
+</resources>
