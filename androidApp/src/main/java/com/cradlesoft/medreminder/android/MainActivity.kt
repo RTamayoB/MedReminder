@@ -3,23 +3,41 @@ package com.cradlesoft.medreminder.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -30,8 +48,9 @@ import androidx.navigation.compose.rememberNavController
 import com.cradlesoft.medreminder.android.account.AccountScreen
 import com.cradlesoft.medreminder.android.account.viewmodel.AccountViewModel
 import com.cradlesoft.medreminder.android.files.FilesScreen
+import com.cradlesoft.medreminder.android.home.HomeScreen
 import com.cradlesoft.medreminder.android.prescription.EditMedicineScreen
-import com.cradlesoft.medreminder.android.progress.ProgressScreen
+import com.cradlesoft.medreminder.android.presciption.prescriptionGraph
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,27 +61,29 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeScreen()
+                    MainScreen()
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun MainScreen() {
     val destinations = listOf(
-        Screen.Progress,
+        Screen.Home,
         Screen.Prescriptions,
+        Screen.Drugs,
+        Screen.Appointments,
         Screen.Documents,
-        Screen.Profile
     )
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
     Scaffold(
         bottomBar = {
             NavigationBar {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
                 destinations.forEach { screen ->
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
@@ -74,27 +95,45 @@ fun HomeScreen() {
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                        },
+                                  },
                         icon = {
                             Icon(imageVector = Icons.Default.Call, contentDescription = screen.route)
-                        },
+                               },
                         label = {
-                            Text(text = stringResource(id = screen.resourceId))
+                            Text(text = stringResource(id = screen.resourceId), style = MaterialTheme.typography.labelMedium)
                         }
                     )
                 }
             }
+        },
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {},
+                navigationIcon = {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp)
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color(0xFF3390E9)
+                )
+            )
         }
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = "progress",
+            startDestination = "home",
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable("progress") {
-                ProgressScreen()
+            composable("home") {
+                HomeScreen()
             }
-            composable("prescriptions") {
+            /*prescriptionGraph(
+                navController = navController
+            )
+            composable("medicines") {
                 //TODO: Change for Prescriptions List
                 EditMedicineScreen()
             }
@@ -110,7 +149,7 @@ fun HomeScreen() {
                         accountViewModel.onEvent(event)
                     }
                 )
-            }
+            }*/
         }
     }
 }

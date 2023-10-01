@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="progress">Progress</string>
+    <string name="home">Home</string>
     <string name="prescriptions">Prescriptions</string>
+    <string name="drugs">Drugs</string>
+    <string name="appointments">Appointments</string>
     <string name="documents">Documents</string>
-    <string name="profile">Profile</string>
 </resources>

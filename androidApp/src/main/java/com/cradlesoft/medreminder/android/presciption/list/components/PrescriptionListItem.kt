@@ -1,8 +1,9 @@
-package com.cradlesoft.medreminder.android.progress.components
+package com.cradlesoft.medreminder.android.presciption.list.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,14 +12,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -32,27 +36,38 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PrescriptionProgressItem(
+fun PrescriptionListItem(
     prescription: UIPrescription,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onPrescriptionClicked: (UIPrescription) -> Unit,
 ) {
     Card(
         modifier = modifier.padding(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        onClick = {
+            onPrescriptionClicked(prescription)
+        }
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            Text(text = prescription.name)
+            Row {
+                Text(text = prescription.name)
+                Spacer(modifier = Modifier.weight(1F))
+                Icon(imageVector = Icons.Default.Create, contentDescription = null)
+            }
             Spacer(modifier = Modifier.height(12.dp))
-            ProgressIndicator(progress = prescription.progress / 100F)
+            ProgressIndicator(
+                progress = prescription.progress / 100F,
+                modifier.align(Alignment.CenterHorizontally)
+            )
         }
     }
 
@@ -63,9 +78,7 @@ fun ProgressIndicator(
     progress: Float,
     modifier: Modifier = Modifier
 ) {
-    var barWidth by remember {
-        mutableStateOf(0)
-    }
+    var barWidth by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
     val knobSize = 40.dp
     Box(modifier = modifier) {
@@ -103,8 +116,9 @@ fun ProgressIndicator(
 @Preview
 @Composable
 fun PrescriptionProgressItemPreview() {
-    PrescriptionProgressItem(
+    PrescriptionListItem(
         prescription = mockPresctiptions[0],
+        onPrescriptionClicked = {}
     )
 }
 
