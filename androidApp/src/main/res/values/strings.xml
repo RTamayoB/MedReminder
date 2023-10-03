@@ -2,7 +2,6 @@
 <resources>
     <string name="home">Home</string>
     <string name="prescriptions">Prescriptions</string>
-    <string name="drugs">Drugs</string>
-    <string name="appointments">Appointments</string>
+    <string name="calendar">Calendar</string>
     <string name="documents">Documents</string>
 </resources>

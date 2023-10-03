@@ -1,4 +1,4 @@
-package com.cradlesoft.medreminder.android.prescription
+package com.cradlesoft.medreminder.android.presciption.detail
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

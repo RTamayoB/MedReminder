@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.cradlesoft.medreminder.android.presciption.detail.PrescriptionDetailsScreen
 import com.cradlesoft.medreminder.android.presciption.list.PrescriptionsListScreen
 
 const val prescriptionRoute = "prescriptions"
@@ -21,6 +22,7 @@ fun NavGraphBuilder.prescriptionGraph(navController: NavController) {
             )
         }
         composable("$prescriptionRoute/details/{id}") {
+            PrescriptionDetailsScreen()
         }
     }
 }

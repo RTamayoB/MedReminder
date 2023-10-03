@@ -2,7 +2,6 @@
 <resources>
     <string name="home">Inicio</string>
     <string name="prescriptions">Recetas</string>
-    <string name="drugs">Medicinas</string>
-    <string name="appointments">Citas</string>
+    <string name="calendar">Calendario</string>
     <string name="documents">Documentos</string>
 </resources>
