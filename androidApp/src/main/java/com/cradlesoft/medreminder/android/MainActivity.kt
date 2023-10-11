@@ -3,9 +3,12 @@ package com.cradlesoft.medreminder.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -18,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -25,8 +29,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.cradlesoft.medreminder.android.calendar.CalendarScreen
-import com.cradlesoft.medreminder.android.core.theme.MedTheme
+import com.cradlesoft.medreminder.android.core.ui.theme.MedTheme
 import com.cradlesoft.medreminder.android.home.HomeScreen
+import com.cradlesoft.medreminder.android.presciption.detail.EditMedicineScreen
 import com.cradlesoft.medreminder.android.presciption.prescriptionGraph
 import com.cradlesoft.medreminder.calendar.ui.CalendarState
 
@@ -84,6 +89,37 @@ fun MainScreen() {
                     )
                 }
             }
+        },
+        topBar = {
+            Text(text = "Current: ${currentDestination?.route}")
+        },
+        floatingActionButton = {
+            Crossfade(
+                targetState = currentDestination?.route,
+                label = ""
+            ) { route ->
+                when (route) {
+                    "calendar" -> {
+                        LargeFloatingActionButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_calendar_add),
+                                contentDescription = "Create Event",
+                                modifier = Modifier.size(36.dp)
+                            )
+                        }
+                    }
+                    "prescriptions/list" -> {
+                        LargeFloatingActionButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_file_add),
+                                contentDescription = "Create Prescription",
+                                modifier = Modifier.size(36.dp)
+                            )
+                        }
+                    }
+                    else -> Unit
+                }
+            }
         }
     ) { paddingValues ->
         NavHost(
@@ -101,14 +137,10 @@ fun MainScreen() {
                     onNavigateBack = { /*TODO*/ }
                 )
             }
-            /*composable("medicines") {
-                //TODO: Change for Prescriptions List
+            composable("documents") {
                 EditMedicineScreen()
             }
-            composable("documents") {
-                FilesScreen()
-            }
-            composable("profile") {
+            /*composable("profile") {
                 val accountViewModel = viewModel<AccountViewModel>()
                 val state by accountViewModel.state.collectAsState()
                 AccountScreen(

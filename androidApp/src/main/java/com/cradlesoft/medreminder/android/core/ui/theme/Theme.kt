@@ -1,4 +1,4 @@
-package com.cradlesoft.medreminder.android.core.theme
+package com.cradlesoft.medreminder.android.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,7 +33,6 @@ fun MedTheme(
             onTertiary = ModernGreen20,
             tertiaryContainer = ModernGreen30,
             onTertiaryContainer = ModernGreen90,
-            background = MedicalGreyDark,
             surfaceVariant = MedicalGreyDark
         )
     } else {
@@ -50,7 +49,6 @@ fun MedTheme(
             onTertiary = CrispWhite,
             tertiaryContainer = ModernGreen90,
             onTertiaryContainer = ModernGreen10,
-            background = MedicalGrey,
             surfaceVariant = MedicalGrey
         )
     }
