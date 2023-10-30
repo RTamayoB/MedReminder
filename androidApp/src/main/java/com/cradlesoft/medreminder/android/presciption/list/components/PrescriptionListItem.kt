@@ -34,13 +34,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import com.cradlesoft.medreminder.android.core.ui.theme.MedTheme
+import com.cradlesoft.medreminder.core.domain.models.Prescription
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrescriptionListItem(
-    prescription: UIPrescription,
+    prescription: Prescription,
     modifier: Modifier = Modifier,
-    onPrescriptionClicked: (UIPrescription) -> Unit,
+    onPrescriptionClicked: (Prescription) -> Unit,
 ) {
     Card(
         modifier = modifier.padding(8.dp),
@@ -57,11 +58,11 @@ fun PrescriptionListItem(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            Text(text = prescription.name)
+            Text(text = prescription.name + " - " + prescription.id)
             Text(text = "Dr Marcus", style = MaterialTheme.typography.bodySmall)
             Spacer(modifier = Modifier.height(12.dp))
             ProgressIndicator(
-                progress = prescription.progress / 100F,
+                progress = /*prescription.progress*/ 20 / 100F,
                 modifier
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -125,17 +126,17 @@ fun PrescriptionProgressItemPreview() {
 }
 
 val mockPresctiptions = listOf(
-    UIPrescription(
-        "Receta Ginecologo",
-        50
+    Prescription(
+        name = "Receta Ginecologo",
+        medicines = emptyList()
     ),
-    UIPrescription(
-        "Receta Dentista",
-        50
+    Prescription(
+        name = "Receta Dentista",
+        medicines = emptyList()
     ),
-    UIPrescription(
-        "Receta Medico G.",
-        70
+    Prescription(
+        name = "Receta Medico G.",
+        medicines = emptyList()
     )
 )
 

@@ -44,17 +44,22 @@ import androidx.compose.ui.window.DialogProperties
 import com.cradlesoft.medreminder.android.R
 import com.cradlesoft.medreminder.android.core.ui.components.InputSelector
 import com.cradlesoft.medreminder.android.core.ui.components.InputText
+import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailEvent
+import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PrescriptionDetailsScreen() {
+fun PrescriptionDetailsScreen(
+    state: PrescriptionDetailState,
+    onEvent: (PrescriptionDetailEvent) -> Unit
+) {
     var openTestDialog by remember {
         mutableStateOf(false)
     }
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Receta Ginecologo")},
+                title = { Text(text = state.prescription?.name ?: "")},
                 navigationIcon = {
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "Go back")

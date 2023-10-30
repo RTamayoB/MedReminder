@@ -39,6 +39,8 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
                 implementation("app.cash.sqldelight:runtime:2.0.0")
                 implementation("app.cash.sqldelight:coroutines-extensions:2.0.0")
+                implementation("io.insert-koin:koin-core:3.2.0")
+                implementation("io.insert-koin:koin-test:3.2.0")
             }
         }
         val androidMain by getting {

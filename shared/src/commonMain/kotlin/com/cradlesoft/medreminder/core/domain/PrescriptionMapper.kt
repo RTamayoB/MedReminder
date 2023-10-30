@@ -21,13 +21,6 @@ suspend fun List<PrescriptionEntity>.toPrescriptions(): List<Prescription> {
     return map { it.toPrescription() }
 }
 
-suspend fun Prescription.toPrescriptionEntity(): PrescriptionEntity {
-    return PrescriptionEntity(
-        id = id ?: 0,
-        name = name
-    )
-}
-
 suspend fun MedicineEntity.toMedicine(): Medicine {
     return Medicine(
         id = id,

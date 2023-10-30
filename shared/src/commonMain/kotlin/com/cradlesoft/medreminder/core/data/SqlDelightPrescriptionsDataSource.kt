@@ -8,7 +8,6 @@ import com.cradlesoft.medreminder.core.domain.models.Prescription
 import com.cradlesoft.medreminder.core.domain.toIntakes
 import com.cradlesoft.medreminder.core.domain.toMedicines
 import com.cradlesoft.medreminder.core.domain.toPrescription
-import com.cradlesoft.medreminder.core.domain.toPrescriptionEntity
 import com.cradlesoft.medreminder.core.domain.toPrescriptions
 import com.cradlesoft.medreminder.database.PrescriptionsDatabase
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +63,9 @@ class SqlDelightPrescriptionsDataSource(
     }
 
     override suspend fun insertPrescription(prescription: Prescription) {
-       queries.insertPrescription(prescription.toPrescriptionEntity())
+       queries.insertPrescription(
+           name = prescription.name
+       )
     }
 
     override suspend fun deletePrescription(id: Long) {

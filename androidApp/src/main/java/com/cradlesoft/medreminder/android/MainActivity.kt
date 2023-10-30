@@ -34,8 +34,12 @@ import com.cradlesoft.medreminder.android.home.HomeScreen
 import com.cradlesoft.medreminder.android.presciption.detail.EditMedicineScreen
 import com.cradlesoft.medreminder.android.presciption.prescriptionGraph
 import com.cradlesoft.medreminder.calendar.ui.CalendarState
+import org.koin.androidx.compose.KoinAndroidContext
+import org.koin.compose.KoinContext
+import org.koin.core.annotation.KoinExperimentalAPI
 
 class MainActivity : ComponentActivity() {
+    @OptIn(KoinExperimentalAPI::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -44,7 +48,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen()
+                    KoinAndroidContext {
+                        MainScreen()
+                    }
                 }
             }
         }
