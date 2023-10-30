@@ -4,15 +4,17 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.cradlesoft.medreminder.core.domain.PrescriptionsDataSource
+import com.cradlesoft.medreminder.core.domain.models.Doctor
 import com.cradlesoft.medreminder.core.domain.models.Prescription
+import com.cradlesoft.medreminder.core.domain.toDoctor
 import com.cradlesoft.medreminder.core.domain.toIntakes
 import com.cradlesoft.medreminder.core.domain.toMedicines
 import com.cradlesoft.medreminder.core.domain.toPrescription
-import com.cradlesoft.medreminder.core.domain.toPrescriptions
 import com.cradlesoft.medreminder.database.PrescriptionsDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 
 class SqlDelightPrescriptionsDataSource(
@@ -26,9 +28,17 @@ class SqlDelightPrescriptionsDataSource(
             .asFlow()
             .mapToList(Dispatchers.IO)
             .map { prescriptionEntities ->
-                prescriptionEntities.toPrescriptions().map { prescription ->
-                    prescription.copy(
-                        medicines = queries.getMedicinesByPrescriptionId(prescription.id ?: 0)
+                prescriptionEntities.map { prescriptionEntity ->
+                    var doctor: Doctor? = null
+                    prescriptionEntity.doctor_id?.let { doctorId ->
+                        queries.getDoctorById(doctorId).asFlow().mapToOneOrNull(Dispatchers.IO).collectLatest {
+                            doctor = it?.toDoctor()
+                        }
+                    }
+                    prescriptionEntity.toPrescription().copy(
+                        doctor = doctor,
+                        medicines = queries
+                            .getMedicinesByPrescriptionId(prescriptionEntity.id)
                             .executeAsList()
                             .toMedicines().map { medicine ->
                                 medicine.copy(
@@ -64,7 +74,8 @@ class SqlDelightPrescriptionsDataSource(
 
     override suspend fun insertPrescription(prescription: Prescription) {
        queries.insertPrescription(
-           name = prescription.name
+           name = prescription.name,
+           doctor_id = prescription.doctor?.id,
        )
     }
 

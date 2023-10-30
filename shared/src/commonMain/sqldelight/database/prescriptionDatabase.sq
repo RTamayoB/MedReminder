@@ -1,6 +1,14 @@
+CREATE TABLE doctorEntity (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name TEXT NOT NULL,
+    specialty TEXT NOT NULL
+);
+
 CREATE TABLE prescriptionEntity (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    doctor_id INTEGER,
+    FOREIGN KEY (doctor_id) REFERENCES doctorEntity(id)
 );
 
 CREATE TABLE medicineEntity (
@@ -19,6 +27,15 @@ CREATE TABLE intakeEntity (
     FOREIGN KEY (medicine_id) REFERENCES medicineEntity(id)
 );
 
+getAllDoctors:
+SELECT * FROM doctorEntity;
+
+getDoctorById:
+SELECT * FROM doctorEntity WHERE id = ?;
+
+insertDoctor:
+INSERT INTO doctorEntity (name, specialty) VALUES (?, ?);
+
 getAllPrescriptions:
 SELECT * FROM prescriptionEntity;
 
@@ -29,7 +46,7 @@ getPrescriptionByName:
 SELECT * FROM prescriptionEntity WHERE name = ?;
 
 insertPrescription:
-INSERT INTO prescriptionEntity (name) VALUES (?);
+INSERT INTO prescriptionEntity (name, doctor_id) VALUES (?, ?);
 
 updatePresctiption:
 UPDATE prescriptionEntity SET name = :name WHERE id = :id;
