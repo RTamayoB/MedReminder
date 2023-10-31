@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.cradlesoft.medreminder.android.presciption.list.components.PrescriptionListItem
-import com.cradlesoft.medreminder.android.presciption.list.components.mockPresctiptions
 import com.cradlesoft.medreminder.core.domain.models.Prescription
 import com.cradlesoft.medreminder.prescription.list.ui.PrescriptionListEvent
 import com.cradlesoft.medreminder.prescription.list.ui.PrescriptionListState
@@ -50,6 +49,7 @@ fun PrescriptionsListScreen(
                         PrescriptionListEvent.CreateMockPrescription(
                             Prescription(
                                 name = "Test 2",
+                                doctor = null,
                                 medicines = emptyList()
                             )
                         )

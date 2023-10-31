@@ -58,11 +58,13 @@ fun PrescriptionListItem(
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
-            Text(text = prescription.name + " - " + prescription.id)
-            Text(text = "Dr Marcus", style = MaterialTheme.typography.bodySmall)
+            Text(text = prescription.name)
+            prescription.doctor?.let { doctor ->
+                Text(text = "${doctor.name} - ${doctor.specialty}", style = MaterialTheme.typography.bodySmall)
+            }
             Spacer(modifier = Modifier.height(12.dp))
             ProgressIndicator(
-                progress = /*prescription.progress*/ 20 / 100F,
+                progress = prescription.getIntakeAsFloat(),
                 modifier
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -128,22 +130,19 @@ fun PrescriptionProgressItemPreview() {
 val mockPresctiptions = listOf(
     Prescription(
         name = "Receta Ginecologo",
+        doctor = null,
         medicines = emptyList()
     ),
     Prescription(
         name = "Receta Dentista",
+        doctor = null,
         medicines = emptyList()
     ),
     Prescription(
         name = "Receta Medico G.",
+        doctor = null,
         medicines = emptyList()
     )
-)
-
-//TODO: Move to correct package/layer
-data class UIPrescription(
-    val name: String = "",
-    val progress: Int = 0
 )
 
 fun convertToPercentage(decimal: Float): String {
