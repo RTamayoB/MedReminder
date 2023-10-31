@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.cradlesoft.medreminder.android.presciption.list.components.PrescriptionListItem
 import com.cradlesoft.medreminder.core.domain.models.Prescription
@@ -30,6 +31,11 @@ fun PrescriptionsListScreen(
         },
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
     ) { paddingValues ->
+
+        LaunchedEffect(true) {
+            onEvent(PrescriptionListEvent.GetPrescriptions)
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

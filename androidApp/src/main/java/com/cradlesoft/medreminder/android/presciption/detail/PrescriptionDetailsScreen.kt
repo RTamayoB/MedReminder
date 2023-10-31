@@ -1,5 +1,6 @@
 package com.cradlesoft.medreminder.android.presciption.detail
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,17 +8,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,6 +49,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.cradlesoft.medreminder.android.R
 import com.cradlesoft.medreminder.android.core.ui.components.InputSelector
 import com.cradlesoft.medreminder.android.core.ui.components.InputText
+import com.cradlesoft.medreminder.core.domain.models.Prescription
 import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailEvent
 import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailState
 
@@ -51,70 +57,74 @@ import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailState
 @Composable
 fun PrescriptionDetailsScreen(
     state: PrescriptionDetailState,
-    onEvent: (PrescriptionDetailEvent) -> Unit
+    onEvent: (PrescriptionDetailEvent) -> Unit,
+    onBackPress: () -> Unit
 ) {
     var openTestDialog by remember {
+        mutableStateOf(false)
+    }
+    var openQuitEditModeDialog by remember {
+        mutableStateOf(false)
+    }
+    var deletePrescriptionDialog by remember {
         mutableStateOf(false)
     }
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = state.prescription?.name ?: "")},
+                title = {
+                    val title = if (state.isEditMode) "Edit Prescription" else state.prescription.name
+                    Text(text = title)
+                },
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "Go back")
+                    if (state.isEditMode) {
+                        IconButton(onClick = { openQuitEditModeDialog = true }) {
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                contentDescription = "Disable Edit Mode"
+                            )
+                        }
+                    } else {
+                        IconButton(onClick = onBackPress) {
+                            Icon(
+                                imageVector = Icons.Rounded.ArrowBack,
+                                contentDescription = "Go back"
+                            )
+                        }
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(painter = painterResource(id = R.drawable.ic_file_edit), contentDescription = null)
+                    if (!state.isEditMode) {
+                        IconButton(onClick = { onEvent(PrescriptionDetailEvent.EditModeOn) }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_file_edit),
+                                contentDescription = null
+                            )
+                        }
+                    } else {
+                        IconButton(onClick = { deletePrescriptionDialog = true }) {
+                            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Prescription")
+                        }
+                        TextButton(onClick = { onEvent(PrescriptionDetailEvent.SavePrescription) }) {
+                            Text(text = "Save")
+                        }
                     }
                 }
             )
         }
     ) { paddingValues ->
-
-        var doctor by remember {
-            mutableStateOf("Doctor Marcus")
-        }
-
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(horizontal = 18.dp)
-                .fillMaxSize()
-        ) {
-            InputText(
-                value = doctor,
-                onValueChange = {
-                    doctor = it
-                },
-                label = "Doctor Asignado"
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-
-                Spacer(modifier = Modifier.width(14.dp))
-            }
-            Text(text = "Medicinas")
-            Divider()
-            LazyColumn {
-                items(1) {
-                    MedicineInlineItem()
-                }
-                items(2) {
-                    MedicineInlineItem2()
-                }
-                items(1) {
-                    MedicineInlineItem()
-                }
-                item { 
-                    Button(onClick = { openTestDialog = true }) {
-                        Text(text = "Open Dialog")
-                    }
-                }
+        Crossfade(targetState = state.isEditMode, label = "") { isEditMode ->
+            if (isEditMode) {
+                PrescriptionForm(
+                    prescription = state.prescription,
+                    onNameChanged = { onEvent(PrescriptionDetailEvent.SetPrescriptionName(it)) },
+                    modifier = Modifier.padding(paddingValues)
+                )
+            } else {
+                PrescriptionDetail(
+                    prescription = state.prescription,
+                    modifier = Modifier.padding(paddingValues)
+                )
             }
         }
     }
@@ -125,6 +135,140 @@ fun PrescriptionDetailsScreen(
             }
         )
     }
+    if (openQuitEditModeDialog) {
+        QuitEditModeDialog(
+            onDismissRequest = { openQuitEditModeDialog = false },
+            onConfirmButtonClick = {
+                onEvent(PrescriptionDetailEvent.CancelEdit)
+                openQuitEditModeDialog = false
+            }
+        )
+    }
+    if (deletePrescriptionDialog) {
+        DeletePrescriptionDialog(
+            onDismissRequest = { deletePrescriptionDialog = false },
+            onConfirmButtonClick = {
+                deletePrescriptionDialog = false
+                onEvent(PrescriptionDetailEvent.DeletePrescription)
+                onBackPress()
+            }
+        )
+    }
+}
+
+@Composable
+fun PrescriptionDetail(
+    prescription: Prescription,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        TextField(value = "Marcus Andrews", onValueChange = {}, enabled = false)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "Medicinas")
+        Divider()
+        LazyColumn {
+            items(prescription.medicines) { _ ->
+                MedicineInlineItem()
+            }
+            items(1) {
+                MedicineInlineItem()
+            }
+            items(2) {
+                MedicineInlineItem2()
+            }
+            items(1) {
+                MedicineInlineItem()
+            }
+        }
+    }
+}
+
+@Composable
+fun PrescriptionForm(
+    prescription: Prescription,
+    onNameChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var doctor by remember {
+        mutableStateOf("Doctor Marcus")
+    }
+
+    Column(
+        modifier = modifier
+    ) {
+        InputText(
+            value = prescription.name,
+            onValueChange = onNameChanged,
+            label = "Titulo de la Receta"
+        )
+        InputText(
+            value = doctor,
+            onValueChange = {
+                doctor = it
+            },
+            label = "Doctor Asignado"
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "Medicinas")
+        Divider()
+        LazyColumn {
+            items(1) {
+                MedicineInlineItem()
+            }
+            items(2) {
+                MedicineInlineItem2()
+            }
+            items(1) {
+                MedicineInlineItem()
+            }
+        }
+    }
+}
+@Composable
+fun QuitEditModeDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmButtonClick: () ->Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = { 
+            TextButton(onClick = onConfirmButtonClick) {
+                Text(text = "Quit")
+            } 
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(text = "Cancel")
+            }
+        },
+        title = { Text(text = "Quit Edit Mode?")}
+    )
+}
+
+@Composable
+fun DeletePrescriptionDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmButtonClick: () ->Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(onClick = onConfirmButtonClick) {
+                Text(text = "Delete")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(text = "Cancel")
+            }
+        },
+        title = { Text(text = "Delete Prescription?")},
+        text = {
+            Text(text = "Deleting the Prescription will also delete all associated meds.")
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

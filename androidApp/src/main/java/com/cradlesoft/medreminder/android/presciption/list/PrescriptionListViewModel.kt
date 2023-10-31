@@ -6,24 +6,20 @@ import com.cradlesoft.medreminder.core.domain.PrescriptionsDataSource
 import com.cradlesoft.medreminder.prescription.list.ui.PrescriptionListEvent
 import com.cradlesoft.medreminder.prescription.list.ui.PrescriptionListState
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class PrescriptionListViewModel(
     private val prescriptionsDataSource: PrescriptionsDataSource
 ): ViewModel() {
     private val _state = MutableStateFlow(PrescriptionListState())
+    val state: StateFlow<PrescriptionListState> = _state.asStateFlow()
 
-    val state = combine(
-        _state,
-        prescriptionsDataSource.getPrescriptions()
-    ) { state, prescriptions ->
-        state.copy(
-            prescriptions = prescriptions
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), PrescriptionListState())
+    init {
+        getPrescriptions()
+    }
 
     fun onEvent(event: PrescriptionListEvent) {
         when (event) {
@@ -32,7 +28,21 @@ class PrescriptionListViewModel(
                     prescriptionsDataSource.insertPrescription(event.newPrescription)
                 }
             }
-            else -> Unit
+            is PrescriptionListEvent.GetPrescriptions -> {
+                getPrescriptions()
+            }
+        }
+    }
+
+    private fun getPrescriptions() {
+        viewModelScope.launch {
+            prescriptionsDataSource.getPrescriptions().collect { prescriptions ->
+                _state.update {
+                    it.copy(
+                        prescriptions = prescriptions
+                    )
+                }
+            }
         }
     }
 }

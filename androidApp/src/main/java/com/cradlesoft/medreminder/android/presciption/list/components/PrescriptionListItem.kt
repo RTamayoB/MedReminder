@@ -64,7 +64,7 @@ fun PrescriptionListItem(
             }
             Spacer(modifier = Modifier.height(12.dp))
             ProgressIndicator(
-                progress = prescription.getIntakeAsFloat(),
+                progress = prescription.getTotalIntake(),
                 modifier
                     .fillMaxWidth()
                     .padding(8.dp)

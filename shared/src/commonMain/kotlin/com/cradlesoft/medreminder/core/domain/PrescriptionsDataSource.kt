@@ -7,5 +7,6 @@ interface PrescriptionsDataSource {
     fun getPrescriptions(): Flow<List<Prescription>>
     fun getPrescriptionById(id: Long): Flow<Prescription?>
     suspend fun insertPrescription(prescription: Prescription)
+    suspend fun updatePrescription(prescription: Prescription)
     suspend fun deletePrescription(id: Long)
 }

@@ -75,11 +75,16 @@ class SqlDelightPrescriptionsDataSource(
     override suspend fun insertPrescription(prescription: Prescription) {
        queries.insertPrescription(
            name = prescription.name,
-           doctor_id = prescription.doctor?.id,
        )
     }
 
     override suspend fun deletePrescription(id: Long) {
         queries.deletePresctiption(id)
+    }
+
+    override suspend fun updatePrescription(prescription: Prescription) {
+        prescription.id?.let {
+            queries.updatePresctiption(prescription.name, it)
+        }
     }
 }

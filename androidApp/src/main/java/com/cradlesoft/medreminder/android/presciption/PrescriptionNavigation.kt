@@ -3,8 +3,10 @@ package com.cradlesoft.medreminder.android.presciption
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.cradlesoft.medreminder.android.presciption.detail.PrescriptionDetailViewModel
 import com.cradlesoft.medreminder.android.presciption.detail.PrescriptionDetailsScreen
 import com.cradlesoft.medreminder.android.presciption.list.PrescriptionListViewModel
@@ -29,12 +31,16 @@ fun NavGraphBuilder.prescriptionGraph(navController: NavController) {
                 }
             )
         }
-        composable("$prescriptionRoute/details/{id}") {
+        composable(
+            route = "$prescriptionRoute/details/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
+        ) {
             val prescriptionDetailViewModel = koinViewModel<PrescriptionDetailViewModel>()
             val state = prescriptionDetailViewModel.state.collectAsState()
             PrescriptionDetailsScreen(
                 state = state.value,
-                onEvent = { prescriptionDetailViewModel.onEvent(it) }
+                onEvent = { prescriptionDetailViewModel.onEvent(it) },
+                onBackPress = { navController.popBackStack() }
             )
         }
     }
