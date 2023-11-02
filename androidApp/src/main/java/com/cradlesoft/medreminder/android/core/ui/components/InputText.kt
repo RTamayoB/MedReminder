@@ -18,6 +18,7 @@ fun InputText(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     label: String? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     singleLine: Boolean = false,
@@ -25,12 +26,13 @@ fun InputText(
     minLines: Int = 1,
 ) {
     InputBase(
-        label = label
+        label = label,
+        modifier = modifier
     ) {
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            modifier = modifier,
+            trailingIcon = trailingIcon,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             singleLine = singleLine,

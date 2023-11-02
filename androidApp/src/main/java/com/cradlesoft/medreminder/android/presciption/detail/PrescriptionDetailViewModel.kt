@@ -1,9 +1,11 @@
 package com.cradlesoft.medreminder.android.presciption.detail
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cradlesoft.medreminder.core.domain.PrescriptionsDataSource
+import com.cradlesoft.medreminder.core.domain.models.Medicine
 import com.cradlesoft.medreminder.core.domain.models.Prescription
 import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailEvent
 import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailState
@@ -42,18 +44,18 @@ class PrescriptionDetailViewModel(
 
     fun onEvent(event: PrescriptionDetailEvent) {
         when (event) {
-            is PrescriptionDetailEvent.EditModeOn -> {
+            is PrescriptionDetailEvent.EnabledEditMode -> {
                 previousPrescriptionState = state.value.prescription
                 _state.update {
                     it.copy(
-                        isEditMode = true
+                        isEditModeEnabled = true
                     )
                 }
             }
-            is PrescriptionDetailEvent.CancelEdit -> {
+            is PrescriptionDetailEvent.CancelEditMode -> {
                 _state.update {
                     it.copy(
-                        isEditMode = false,
+                        isEditModeEnabled = false,
                         prescription = previousPrescriptionState
                     )
                 }
@@ -62,7 +64,7 @@ class PrescriptionDetailViewModel(
                 previousPrescriptionState = state.value.prescription
                 _state.update {
                     it.copy(
-                        isEditMode = false,
+                        isEditModeEnabled = false,
                         prescription = state.value.prescription
                     )
                 }
@@ -80,6 +82,9 @@ class PrescriptionDetailViewModel(
                     )
                 }
             }
+            is PrescriptionDetailEvent.AddMedicineToPrescription -> {
+                addMedicineToPrescription(event.newMedicine)
+            }
         }
     }
 
@@ -93,5 +98,18 @@ class PrescriptionDetailViewModel(
         viewModelScope.launch {
             prescriptionsDataSource.deletePrescription(id)
         }
+    }
+
+    private fun addMedicineToPrescription(newMedicine: Medicine) {
+        val prescription = _state.value.prescription
+        Log.d("Prev Meds", prescription.medicines.toString())
+        var newMedicines = prescription.medicines.toMutableList()
+        newMedicines.add(newMedicine)
+        _state.update {
+            it.copy(
+                prescription = it.prescription.copy(medicines = newMedicines)
+            )
+        }
+        Log.d("New Meds", _state.value.prescription.medicines.toString())
     }
 }

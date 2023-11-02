@@ -16,6 +16,10 @@ CREATE TABLE medicineEntity (
     prescription_id INTEGER,
     name TEXT NOT NULL,
     type TEXT NOT NULL,
+    method TEXT NOT NULL,
+    common_intake REAL NOT NULL,
+    start_intake TEXT NOT NULL,
+    end_intake TEXT NOT NULL,
     FOREIGN KEY (prescription_id) REFERENCES prescriptionEntity(id)
 );
 
@@ -68,7 +72,7 @@ getMedicineByName:
 SELECT * FROM medicineEntity WHERE id = ?;
 
 insertMedicine:
-INSERT INTO medicineEntity VALUES ?;
+INSERT OR REPLACE INTO medicineEntity (prescription_id, name, type, method, common_intake, start_intake, end_intake) VALUES (?,?,?,?,?,?,?);
 
 updateMedicine:
 UPDATE medicineEntity SET name = :name, type = :type WHERE id = :id;

@@ -16,6 +16,8 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import org.koin.core.logger.Level
+import org.koin.core.logger.Logger
 
 class SqlDelightPrescriptionsDataSource(
     db: PrescriptionsDatabase
@@ -83,8 +85,20 @@ class SqlDelightPrescriptionsDataSource(
     }
 
     override suspend fun updatePrescription(prescription: Prescription) {
+        val medicines = prescription.medicines
         prescription.id?.let {
             queries.updatePresctiption(prescription.name, it)
+            for (medicine in medicines) {
+                queries.insertMedicine(
+                    prescription_id = prescription.id,
+                    name = medicine.name,
+                    type = medicine.type.name,
+                    method = medicine.method,
+                    common_intake = medicine.commonIntake.toDouble(),
+                    start_intake = medicine.startOfIntake.toString(),
+                    end_intake = medicine.endOfIntake.toString()
+                )
+            }
         }
     }
 }

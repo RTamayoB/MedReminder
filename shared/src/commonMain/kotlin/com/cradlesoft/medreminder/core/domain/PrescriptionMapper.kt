@@ -9,6 +9,7 @@ import database.DoctorEntity
 import database.IntakeEntity
 import database.MedicineEntity
 import database.PrescriptionEntity
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 fun DoctorEntity.toDoctor(): Doctor {
@@ -43,6 +44,8 @@ fun MedicineEntity.toMedicine(): Medicine {
             "solution" -> MedicineType.SOLUTION
             else -> MedicineType.NONE
         },
+        startOfIntake = LocalDate.parse(start_intake),
+        endOfIntake = LocalDate.parse(end_intake),
         intakes = emptyList()
     )
 }

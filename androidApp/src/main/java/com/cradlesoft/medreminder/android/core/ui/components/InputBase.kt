@@ -22,7 +22,7 @@ internal fun InputBase(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier.padding(vertical = 8.dp)
             )
         }
         input()

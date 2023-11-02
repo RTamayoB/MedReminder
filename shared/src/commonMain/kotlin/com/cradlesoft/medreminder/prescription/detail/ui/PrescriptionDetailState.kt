@@ -4,5 +4,5 @@ import com.cradlesoft.medreminder.core.domain.models.Prescription
 
 data class PrescriptionDetailState(
     val prescription: Prescription = Prescription(),
-    val isEditMode: Boolean = false
+    val isEditModeEnabled: Boolean = false
 )

@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material3.Divider
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cradlesoft.medreminder.android.core.ui.theme.MedTheme
@@ -42,18 +45,19 @@ fun <T>InputSelector(
     var expanded by remember { mutableStateOf(false) }
 
     InputBase(
-        label = label
+        label = label,
+        modifier = modifier
     ) {
         Box {
             Box(
-                modifier = modifier
+                modifier = Modifier
                     .defaultMinSize(
                         minWidth = OutlinedTextFieldDefaults.MinWidth,
                         minHeight = OutlinedTextFieldDefaults.MinHeight
                     )
                     .clip(OutlinedTextFieldDefaults.shape)
                     .border(
-                        width = OutlinedTextFieldDefaults.UnfocusedBorderThickness,
+                        width = if (expanded) OutlinedTextFieldDefaults.FocusedBorderThickness else OutlinedTextFieldDefaults.UnfocusedBorderThickness,
                         color = if (expanded) MaterialTheme.colorScheme.primary else
                             MaterialTheme.colorScheme.outline,
                         shape = OutlinedTextFieldDefaults.shape
@@ -65,7 +69,7 @@ fun <T>InputSelector(
                     )
             ) {
                 Text(
-                    text = selectedOption.toString(),
+                    text = selectedOption.toString().lowercase().replaceFirstChar { it.uppercase() },
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = selectorPadding.align(Alignment.CenterStart)
                 )
@@ -78,12 +82,12 @@ fun <T>InputSelector(
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-
+                modifier = Modifier.wrapContentWidth()
             ) {
                 options.forEachIndexed { index, option ->
                     DropdownMenuItem(
                         text = {
-                            Text(text = option.toString())
+                            Text(text = option.toString().lowercase().replaceFirstChar { it.uppercase() })
                         },
                         onClick = {
                             onOptionSelected(option)
@@ -91,7 +95,6 @@ fun <T>InputSelector(
                         },
                         modifier = Modifier
                             .defaultMinSize(
-                                minWidth = OutlinedTextFieldDefaults.MinWidth,
                                 minHeight = 30.dp
                             )
                     )
