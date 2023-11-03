@@ -14,6 +14,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 
 class PrescriptionDetailViewModel(
     savedStateHandle: SavedStateHandle,
@@ -101,15 +107,26 @@ class PrescriptionDetailViewModel(
     }
 
     private fun addMedicineToPrescription(newMedicine: Medicine) {
+        val newMed = setMedicinePeriod(newMedicine)
         val prescription = _state.value.prescription
-        Log.d("Prev Meds", prescription.medicines.toString())
-        var newMedicines = prescription.medicines.toMutableList()
-        newMedicines.add(newMedicine)
+        val newMedicines = prescription.medicines.toMutableList()
+        newMedicines.add(newMed)
         _state.update {
             it.copy(
                 prescription = it.prescription.copy(medicines = newMedicines)
             )
         }
-        Log.d("New Meds", _state.value.prescription.medicines.toString())
+    }
+
+    private fun setMedicinePeriod(medicine: Medicine): Medicine {
+        var newMedicine = medicine
+        Log.d("Interval",newMedicine.interval.toString())
+        newMedicine = newMedicine.copy(
+            startOfIntake = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
+            endOfIntake = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.plus(
+                DatePeriod(days = newMedicine.days)
+            ),
+        )
+        return newMedicine
     }
 }

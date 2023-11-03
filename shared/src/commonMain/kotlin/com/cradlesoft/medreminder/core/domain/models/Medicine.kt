@@ -13,7 +13,9 @@ data class Medicine(
     val name: String = "",
     val type: MedicineType = MedicineType.TABLETS,
     val method: String = "",
-    val commonIntake : Float = 0.0F,
+    val commonIntake : Float = 0.0F, //Temp String?
+    val interval: Int = 0, //Temp String
+    val days: Int = 0, //Temp String
     val startOfIntake: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
     val endOfIntake: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.plus(
         DatePeriod(days = 5)

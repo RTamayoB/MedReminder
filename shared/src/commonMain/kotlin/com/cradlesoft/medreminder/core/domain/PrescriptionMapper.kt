@@ -44,6 +44,8 @@ fun MedicineEntity.toMedicine(): Medicine {
             "solution" -> MedicineType.SOLUTION
             else -> MedicineType.NONE
         },
+        commonIntake = common_intake.toFloat(),
+        interval = interval.toInt(),
         startOfIntake = LocalDate.parse(start_intake),
         endOfIntake = LocalDate.parse(end_intake),
         intakes = emptyList()

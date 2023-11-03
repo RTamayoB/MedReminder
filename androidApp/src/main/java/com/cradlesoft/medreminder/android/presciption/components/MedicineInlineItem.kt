@@ -29,7 +29,7 @@ fun MedicineInlineItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(),
+            .padding(8.dp),
         shape = RoundedCornerShape(20.dp),
         onClick = {
             onMedicineClicked(medicine)
@@ -49,8 +49,8 @@ fun MedicineInlineItem(
             Column {
                 Text(text = medicine.name)
                 //TODO: Set intake instructions correctly
-                Text(text = medicine.intakes.size.toString())
-                Text(text = " for ${medicine.getPeriodInDays()} days")
+                Text(text = "cada ${medicine.interval} horas")
+                Text(text = " por ${medicine.getPeriodInDays()} dias")
             }
         }
     }

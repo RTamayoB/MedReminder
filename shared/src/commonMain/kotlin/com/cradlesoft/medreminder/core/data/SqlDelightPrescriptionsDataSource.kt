@@ -16,8 +16,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import org.koin.core.logger.Level
-import org.koin.core.logger.Logger
 
 class SqlDelightPrescriptionsDataSource(
     db: PrescriptionsDatabase
@@ -90,11 +88,13 @@ class SqlDelightPrescriptionsDataSource(
             queries.updatePresctiption(prescription.name, it)
             for (medicine in medicines) {
                 queries.insertMedicine(
+                    id = medicine.id,
                     prescription_id = prescription.id,
                     name = medicine.name,
                     type = medicine.type.name,
                     method = medicine.method,
                     common_intake = medicine.commonIntake.toDouble(),
+                    interval = medicine.interval.toLong(),
                     start_intake = medicine.startOfIntake.toString(),
                     end_intake = medicine.endOfIntake.toString()
                 )

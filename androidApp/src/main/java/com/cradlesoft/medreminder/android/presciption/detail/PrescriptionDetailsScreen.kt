@@ -2,11 +2,14 @@ package com.cradlesoft.medreminder.android.presciption.detail
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.ArrowBack
@@ -26,10 +29,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.cradlesoft.medreminder.android.R
+import com.cradlesoft.medreminder.android.core.ui.components.InputSelector
 import com.cradlesoft.medreminder.android.presciption.components.AddMedicineDialog
 import com.cradlesoft.medreminder.android.presciption.components.MedicineInlineItem
 import com.cradlesoft.medreminder.android.presciption.components.PrescriptionForm
@@ -62,7 +68,7 @@ fun PrescriptionDetailsScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    val title = if (state.isEditModeEnabled) "Edit Prescription" else state.prescription.name
+                    val title = if (state.isEditModeEnabled) "Editar Receta" else state.prescription.name
                     Text(text = title)
                 },
                 navigationIcon = {
@@ -95,7 +101,7 @@ fun PrescriptionDetailsScreen(
                             Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Prescription")
                         }
                         TextButton(onClick = { onEvent(PrescriptionDetailEvent.SavePrescription) }) {
-                            Text(text = "Save")
+                            Text(text = "Guardar")
                         }
                     }
                 }
@@ -108,7 +114,8 @@ fun PrescriptionDetailsScreen(
                     prescription = state.prescription,
                     onNameChanged = { onEvent(PrescriptionDetailEvent.SetPrescriptionName(it)) },
                     onAddMedicineClicked = {
-                        onEvent(PrescriptionDetailEvent.AddMedicineToPrescription(
+                        openTestDialog = true
+                        /*onEvent(PrescriptionDetailEvent.AddMedicineToPrescription(
                             Medicine(
                                 name = "Test Medicine",
                                 type = MedicineType.TABLETS,
@@ -116,7 +123,7 @@ fun PrescriptionDetailsScreen(
                                 startOfIntake = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
                                 endOfIntake = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
                             )
-                        ))
+                        ))*/
                     },
                     modifier = Modifier.padding(paddingValues)
                 )
@@ -129,11 +136,20 @@ fun PrescriptionDetailsScreen(
         }
     }
     if (openTestDialog) {
-        AddMedicineDialog(
+        SimpleMedicineDialog(
+            onDismissRequest = {
+                openTestDialog = false
+                               },
+            onConfirmButtonClick = {
+                onEvent(PrescriptionDetailEvent.AddMedicineToPrescription(it))
+                openTestDialog = false
+            },
+        )
+        /*AddMedicineDialog(
             onDismissRequest = {
                 openTestDialog = false
             }
-        )
+        )*/
     }
     if (openQuitEditModeDialog) {
         QuitEditModeDialog(
@@ -221,6 +237,96 @@ fun DeletePrescriptionDialog(
         title = { Text(text = "Delete Prescription?")},
         text = {
             Text(text = "Deleting the Prescription will also delete all associated meds.")
+        }
+    )
+}
+
+@Composable
+fun SimpleMedicineDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmButtonClick: (Medicine) -> Unit
+) {
+    var newMedicine by remember {
+        mutableStateOf(Medicine())
+    }
+    val textFieldSizeModifier = Modifier.width(60.dp)
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(onClick = { onConfirmButtonClick(newMedicine)}) {
+                Text(text = "Guardar")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(text = "Cancelar")
+            }
+        },
+        title = { Text(text = "Agregar Medicina")},
+        text = {
+            Column {
+                TextField(
+                    value = newMedicine.name,
+                    onValueChange = {
+                        newMedicine = newMedicine.copy(name = it)
+                    },
+                    modifier = Modifier.padding(8.dp),
+                    label = { Text(text = "Nombre de la Medicina")}
+                )
+                InputSelector(
+                    options = MedicineType.values().toList(),
+                    selectedOption = newMedicine.type,
+                    onOptionSelected = {
+                        newMedicine = newMedicine.copy(
+                            type = it
+                        )
+                    },
+                    label = "Tipo de Medicamento",
+                    modifier = Modifier
+                        .padding(8.dp)
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Tomar", modifier = Modifier.padding(8.dp))
+                    TextField(
+                        value = newMedicine.commonIntake.toString(),
+                        onValueChange = {
+                            newMedicine = newMedicine.copy(commonIntake = it.toFloat())
+                        },
+                        modifier = textFieldSizeModifier,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Cada", modifier = Modifier.padding(8.dp))
+                    TextField(
+                        value = newMedicine.interval.toString(),
+                        onValueChange = {
+                            newMedicine = newMedicine.copy(interval = it.toIntOrNull() ?: 0)
+                        },
+                        modifier = textFieldSizeModifier,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                    Text(text = "Horas", modifier = Modifier.padding(8.dp))
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Por", modifier = Modifier.padding(8.dp))
+                    TextField(
+                        value = newMedicine.days.toString(),
+                        onValueChange = {
+                            newMedicine = newMedicine.copy(days = it.toIntOrNull() ?: 0)
+                        },
+                        modifier = textFieldSizeModifier,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                    Text(text = "Dias", modifier = Modifier.padding(8.dp))
+                }
+            }
         }
     )
 }
