@@ -36,17 +36,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.cradlesoft.medreminder.android.R
 import com.cradlesoft.medreminder.android.core.ui.components.InputSelector
-import com.cradlesoft.medreminder.android.presciption.components.AddMedicineDialog
 import com.cradlesoft.medreminder.android.presciption.components.MedicineInlineItem
 import com.cradlesoft.medreminder.android.presciption.components.PrescriptionForm
-import com.cradlesoft.medreminder.core.domain.models.Medicine
 import com.cradlesoft.medreminder.core.domain.models.MedicineType
 import com.cradlesoft.medreminder.core.domain.models.Prescription
+import com.cradlesoft.medreminder.prescription.IntakeMethod
+import com.cradlesoft.medreminder.prescription.MedicineBuilder
 import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailEvent
 import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailState
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -244,16 +241,26 @@ fun DeletePrescriptionDialog(
 @Composable
 fun SimpleMedicineDialog(
     onDismissRequest: () -> Unit,
-    onConfirmButtonClick: (Medicine) -> Unit
+    onConfirmButtonClick: (MedicineBuilder) -> Unit
 ) {
     var newMedicine by remember {
-        mutableStateOf(Medicine())
+        mutableStateOf(MedicineBuilder())
+    }
+    var method by remember {
+        mutableStateOf(IntakeMethod.Interval(0))
     }
     val textFieldSizeModifier = Modifier.width(60.dp)
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            TextButton(onClick = { onConfirmButtonClick(newMedicine)}) {
+            TextButton(
+                onClick = {
+                    newMedicine = newMedicine.copy(
+                        method = method
+                    )
+                    onConfirmButtonClick(newMedicine)
+                }
+            ) {
                 Text(text = "Guardar")
             }
         },
@@ -277,9 +284,7 @@ fun SimpleMedicineDialog(
                     options = MedicineType.values().toList(),
                     selectedOption = newMedicine.type,
                     onOptionSelected = {
-                        newMedicine = newMedicine.copy(
-                            type = it
-                        )
+                        newMedicine = newMedicine.copy(type = it)
                     },
                     label = "Tipo de Medicamento",
                     modifier = Modifier
@@ -292,7 +297,7 @@ fun SimpleMedicineDialog(
                     TextField(
                         value = newMedicine.commonIntake.toString(),
                         onValueChange = {
-                            newMedicine = newMedicine.copy(commonIntake = it.toFloat())
+                            newMedicine = newMedicine.copy(commonIntake = it.toFloatOrNull() ?: 0.0F)
                         },
                         modifier = textFieldSizeModifier,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
@@ -303,9 +308,11 @@ fun SimpleMedicineDialog(
                 ) {
                     Text(text = "Cada", modifier = Modifier.padding(8.dp))
                     TextField(
-                        value = newMedicine.interval.toString(),
+                        value = method.interval.toString(),
                         onValueChange = {
-                            newMedicine = newMedicine.copy(interval = it.toIntOrNull() ?: 0)
+                            method = method.copy(
+                                interval = it.toLongOrNull() ?: 0
+                            )
                         },
                         modifier = textFieldSizeModifier,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)

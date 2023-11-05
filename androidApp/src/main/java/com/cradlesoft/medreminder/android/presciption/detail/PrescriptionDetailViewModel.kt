@@ -1,25 +1,19 @@
 package com.cradlesoft.medreminder.android.presciption.detail
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cradlesoft.medreminder.core.domain.PrescriptionsDataSource
-import com.cradlesoft.medreminder.core.domain.models.Medicine
 import com.cradlesoft.medreminder.core.domain.models.Prescription
+import com.cradlesoft.medreminder.prescription.MedicineBuilder
 import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailEvent
 import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.plus
-import kotlinx.datetime.toLocalDateTime
 
 class PrescriptionDetailViewModel(
     savedStateHandle: SavedStateHandle,
@@ -89,7 +83,9 @@ class PrescriptionDetailViewModel(
                 }
             }
             is PrescriptionDetailEvent.AddMedicineToPrescription -> {
-                addMedicineToPrescription(event.newMedicine)
+                viewModelScope.launch(Dispatchers.IO) {
+                    createAndAddMedicine(event.medicineBuilder)
+                }
             }
         }
     }
@@ -106,27 +102,15 @@ class PrescriptionDetailViewModel(
         }
     }
 
-    private fun addMedicineToPrescription(newMedicine: Medicine) {
-        val newMed = setMedicinePeriod(newMedicine)
+    private fun createAndAddMedicine(medicineBuilder: MedicineBuilder) {
+        val newMedicine = medicineBuilder.build()
         val prescription = _state.value.prescription
         val newMedicines = prescription.medicines.toMutableList()
-        newMedicines.add(newMed)
+        newMedicines.add(newMedicine)
         _state.update {
             it.copy(
                 prescription = it.prescription.copy(medicines = newMedicines)
             )
         }
-    }
-
-    private fun setMedicinePeriod(medicine: Medicine): Medicine {
-        var newMedicine = medicine
-        Log.d("Interval",newMedicine.interval.toString())
-        newMedicine = newMedicine.copy(
-            startOfIntake = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
-            endOfIntake = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.plus(
-                DatePeriod(days = newMedicine.days)
-            ),
-        )
-        return newMedicine
     }
 }

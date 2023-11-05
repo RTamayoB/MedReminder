@@ -17,8 +17,6 @@ CREATE TABLE medicineEntity (
     name TEXT NOT NULL,
     type TEXT NOT NULL,
     method TEXT NOT NULL,
-    common_intake REAL NOT NULL,
-    interval INTEGER NOT NULL,
     start_intake TEXT NOT NULL,
     end_intake TEXT NOT NULL,
     FOREIGN KEY (prescription_id) REFERENCES prescriptionEntity(id)
@@ -73,8 +71,11 @@ getMedicineByName:
 SELECT * FROM medicineEntity WHERE id = ?;
 
 insertMedicine:
-INSERT OR REPLACE INTO medicineEntity (id, prescription_id, name, type, method, common_intake, interval, start_intake, end_intake)
-VALUES (?,?,?,?,?,?,?,?,?);
+INSERT OR REPLACE INTO medicineEntity (id, prescription_id, name, type, method, start_intake, end_intake)
+VALUES (?,?,?,?,?,?,?);
+
+lastInsertRowId:
+SELECT last_insert_rowid();
 
 updateMedicine:
 UPDATE medicineEntity SET name = :name, type = :type WHERE id = :id;
@@ -96,7 +97,7 @@ getIntakeByMedicine:
 SELECT * FROM intakeEntity WHERE medicine_id = ?;
 
 insertIntake:
-INSERT INTO intakeEntity VALUES ?;
+INSERT OR REPLACE INTO intakeEntity (id, medicine_id, hour, intake_amount)VALUES (?,?,?,?);
 
 updateIntake:
 UPDATE intakeEntity SET hour = :hour, intake_amount = :intake_amount WHERE id = :id;

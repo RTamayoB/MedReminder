@@ -83,20 +83,27 @@ class SqlDelightPrescriptionsDataSource(
     }
 
     override suspend fun updatePrescription(prescription: Prescription) {
-        val medicines = prescription.medicines
         prescription.id?.let {
             queries.updatePresctiption(prescription.name, it)
-            for (medicine in medicines) {
-                queries.insertMedicine(
-                    id = medicine.id,
-                    prescription_id = prescription.id,
-                    name = medicine.name,
-                    type = medicine.type.name,
-                    method = medicine.method,
-                    common_intake = medicine.commonIntake.toDouble(),
-                    interval = medicine.interval.toLong(),
-                    start_intake = medicine.startOfIntake.toString(),
-                    end_intake = medicine.endOfIntake.toString()
+        }
+        val medicines = prescription.medicines
+        for (medicine in medicines) {
+            queries.insertMedicine(
+                id = medicine.id,
+                prescription_id = prescription.id,
+                name = medicine.name,
+                type = medicine.type.name,
+                method = medicine.method,
+                start_intake = medicine.startOfIntake.toString(),
+                end_intake = medicine.endOfIntake.toString()
+            )
+            val medicineId = queries.lastInsertRowId().executeAsOneOrNull()
+            for (intake in medicine.intakes) {
+                queries.insertIntake(
+                    id = intake.id,
+                    medicine_id = medicineId,
+                    hour = intake.hour.toString(),
+                    intake_amount = intake.intakeAmount.toDouble()
                 )
             }
         }

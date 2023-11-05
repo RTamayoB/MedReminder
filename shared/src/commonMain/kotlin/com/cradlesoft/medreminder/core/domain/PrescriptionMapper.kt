@@ -44,8 +44,7 @@ fun MedicineEntity.toMedicine(): Medicine {
             "solution" -> MedicineType.SOLUTION
             else -> MedicineType.NONE
         },
-        commonIntake = common_intake.toFloat(),
-        interval = interval.toInt(),
+        method = method,
         startOfIntake = LocalDate.parse(start_intake),
         endOfIntake = LocalDate.parse(end_intake),
         intakes = emptyList()
@@ -59,7 +58,7 @@ fun List<MedicineEntity>.toMedicines(): List<Medicine> {
 fun IntakeEntity.toIntake(): Intake {
     return Intake(
         id = id,
-        hour = LocalTime(0,0),
+        hour = LocalTime.parse(hour),
         intakeAmount = intake_amount.toFloat()
     )
 }
