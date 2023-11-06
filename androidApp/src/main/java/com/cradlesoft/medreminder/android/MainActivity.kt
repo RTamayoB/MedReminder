@@ -35,7 +35,6 @@ import com.cradlesoft.medreminder.android.presciption.detail.EditMedicineScreen
 import com.cradlesoft.medreminder.android.presciption.prescriptionGraph
 import com.cradlesoft.medreminder.calendar.ui.CalendarState
 import org.koin.androidx.compose.KoinAndroidContext
-import org.koin.compose.KoinContext
 import org.koin.core.annotation.KoinExperimentalAPI
 
 class MainActivity : ComponentActivity() {
@@ -115,7 +114,7 @@ fun MainScreen() {
                         }
                     }
                     "prescriptions/list" -> {
-                        LargeFloatingActionButton(onClick = { /*TODO*/ }) {
+                        LargeFloatingActionButton(onClick = { navController.navigate("prescriptions/details/new") }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_file_add),
                                 contentDescription = "Create Prescription",

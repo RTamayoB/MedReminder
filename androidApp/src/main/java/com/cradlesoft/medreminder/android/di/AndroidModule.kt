@@ -8,7 +8,7 @@ import org.koin.dsl.module
 
 val androidModule = module {
     viewModel { PrescriptionListViewModel(get()) }
-    viewModel { PrescriptionListViewModel(get()) }
+    viewModel { PrescriptionDetailViewModel(get(), get()) }
     viewModelOf(::PrescriptionListViewModel)
     viewModelOf(::PrescriptionDetailViewModel)
 }

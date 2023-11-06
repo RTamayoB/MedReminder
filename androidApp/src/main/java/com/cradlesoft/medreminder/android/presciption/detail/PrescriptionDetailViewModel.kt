@@ -30,16 +30,18 @@ class PrescriptionDetailViewModel(
 
     init {
         viewModelScope.launch {
-            prescriptionsDataSource.getPrescriptionById(userId.toLong()).collect { prescription ->
-                prescription?.let {
-                    _state.update {
-                        it.copy(
-                            prescription = prescription
-                        )
+            userId.toLongOrNull()?.let { id ->
+                prescriptionsDataSource.getPrescriptionById(id).collect { prescription ->
+                    prescription?.let {
+                        _state.update {
+                            it.copy(
+                                prescription = prescription
+                            )
+                        }
+                        previousPrescriptionState = prescription
                     }
-                    previousPrescriptionState = prescription
                 }
-            }
+            } ?: _state.update { it.copy(isEditModeEnabled = true) }
         }
     }
 
@@ -69,7 +71,11 @@ class PrescriptionDetailViewModel(
                         prescription = state.value.prescription
                     )
                 }
-                updatePrescription(state.value.prescription)
+                if (userId == "new") {
+                    savePrescription(state.value.prescription)
+                } else {
+                    updatePrescription(state.value.prescription)
+                }
             }
             is PrescriptionDetailEvent.OpenMedicine -> {
                 _state.update {
@@ -100,6 +106,12 @@ class PrescriptionDetailViewModel(
                     createAndAddMedicine(event.medicineBuilder)
                 }
             }
+        }
+    }
+
+    private fun savePrescription(prescription: Prescription) {
+        viewModelScope.launch {
+            prescriptionsDataSource.insertPrescription(prescription)
         }
     }
 

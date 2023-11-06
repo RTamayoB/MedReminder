@@ -73,13 +73,10 @@ class SqlDelightPrescriptionsDataSource(
     }
 
     override suspend fun insertPrescription(prescription: Prescription) {
-       queries.insertPrescription(
-           name = prescription.name,
-       )
-    }
-
-    override suspend fun deletePrescription(id: Long) {
-        queries.deletePresctiption(id)
+        queries.insertPrescription(prescription.name)
+        queries.deleteMedicines()
+        queries.deleteSchedules()
+        setPrescriptionData(prescription)
     }
 
     override suspend fun updatePrescription(prescription: Prescription) {
@@ -88,6 +85,14 @@ class SqlDelightPrescriptionsDataSource(
             queries.deleteMedicines()
             queries.deleteSchedules()
         }
+        setPrescriptionData(prescription)
+    }
+
+    override suspend fun deletePrescription(id: Long) {
+        queries.deletePresctiption(id)
+    }
+
+    private fun setPrescriptionData(prescription: Prescription) {
         val medicines = prescription.medicines
         for (medicine in medicines) {
             queries.insertMedicine(
