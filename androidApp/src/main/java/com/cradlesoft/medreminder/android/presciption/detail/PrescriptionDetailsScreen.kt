@@ -112,9 +112,13 @@ fun PrescriptionDetailsScreen(
             if (isEditMode) {
                 PrescriptionForm(
                     prescription = state.prescription,
+                    editModeEnabled = state.isEditModeEnabled,
                     onNameChanged = { onEvent(PrescriptionDetailEvent.SetPrescriptionName(it)) },
                     onAddMedicineClicked = {
                         openAddMedicineDialog = true
+                    },
+                    onMedicineDelete  = {
+                        onEvent(PrescriptionDetailEvent.DeleteMedicine(it))
                     },
                     modifier = Modifier.padding(paddingValues)
                 )
@@ -185,7 +189,9 @@ fun PrescriptionDetail(
             items(prescription.medicines) { medicine ->
                 MedicineInlineItem(
                     medicine = medicine,
-                    onMedicineClicked = onMedicineClicked
+                    editModeEnabled = false,
+                    onMedicineClicked = onMedicineClicked,
+                    onMedicineDelete = {}
                 )
             }
         }

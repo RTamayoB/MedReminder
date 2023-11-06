@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cradlesoft.medreminder.core.domain.PrescriptionsDataSource
+import com.cradlesoft.medreminder.core.domain.models.Medicine
 import com.cradlesoft.medreminder.core.domain.models.Prescription
 import com.cradlesoft.medreminder.prescription.MedicineBuilder
 import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailEvent
@@ -77,6 +78,11 @@ class PrescriptionDetailViewModel(
                     )
                 }
             }
+            is PrescriptionDetailEvent.DeleteMedicine -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    deleteMedicine(event.deletedMedicine)
+                }
+            }
             is PrescriptionDetailEvent.DeletePrescription -> {
                 deletePrescription(state.value.prescription.id!!)
             }
@@ -106,6 +112,16 @@ class PrescriptionDetailViewModel(
     private fun deletePrescription(id: Long) {
         viewModelScope.launch {
             prescriptionsDataSource.deletePrescription(id)
+        }
+    }
+
+    private fun deleteMedicine(medicine: Medicine) {
+        val medicines = _state.value.prescription.medicines.toMutableList()
+        medicines.remove(medicine)
+        _state.update {
+            it.copy(
+                prescription = it.prescription.copy(medicines = medicines)
+            )
         }
     }
 

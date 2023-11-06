@@ -7,6 +7,7 @@ sealed interface PrescriptionDetailEvent {
     data class SetPrescriptionName(val prescriptionName: String): PrescriptionDetailEvent
     data class AddMedicineToPrescription(val medicineBuilder: MedicineBuilder): PrescriptionDetailEvent
     data class OpenMedicine(val selectedMedicine: Medicine): PrescriptionDetailEvent
+    data class DeleteMedicine(val deletedMedicine: Medicine): PrescriptionDetailEvent
     object SavePrescription: PrescriptionDetailEvent
     object DeletePrescription: PrescriptionDetailEvent
     object EnabledEditMode: PrescriptionDetailEvent

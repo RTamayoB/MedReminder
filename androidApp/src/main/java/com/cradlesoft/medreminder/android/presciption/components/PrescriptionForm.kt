@@ -17,13 +17,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.cradlesoft.medreminder.android.core.ui.components.InputText
+import com.cradlesoft.medreminder.core.domain.models.Medicine
 import com.cradlesoft.medreminder.core.domain.models.Prescription
 
 @Composable
 fun PrescriptionForm(
     prescription: Prescription,
+    editModeEnabled: Boolean,
     onNameChanged: (String) -> Unit,
     onAddMedicineClicked: () -> Unit,
+    onMedicineDelete: (Medicine) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -41,9 +44,11 @@ fun PrescriptionForm(
             items(prescription.medicines) { medicine ->
                 MedicineInlineItem(
                     medicine = medicine,
+                    editModeEnabled = editModeEnabled,
                     onMedicineClicked = {
 
-                    }
+                    },
+                    onMedicineDelete = onMedicineDelete
                 )
             }
             item {

@@ -22,7 +22,7 @@ fun LocalDateTime.plus(value: Long, unit: DateTimeUnit): LocalDateTime {
 
 fun LocalTime.plus(value: Long, unit: DateTimeUnit.TimeBased): LocalTime {
     return this
-        .toDateTimeNoTime()
+        .toDateTime()
         .toInstant(timeZone)
         .plus(value, unit)
         .toLocalDateTime(timeZone)
@@ -31,7 +31,7 @@ fun LocalTime.plus(value: Long, unit: DateTimeUnit.TimeBased): LocalTime {
 
 fun LocalTime.minus(value: Long, unit: DateTimeUnit.TimeBased): LocalTime {
     return this
-        .toDateTimeNoTime()
+        .toDateTime()
         .toInstant(timeZone)
         .minus(value, unit)
         .toLocalDateTime(timeZone)
@@ -40,11 +40,11 @@ fun LocalTime.minus(value: Long, unit: DateTimeUnit.TimeBased): LocalTime {
 
 fun LocalTime.timeBetween(time: LocalTime, unit: DateTimeUnit): Long{
     return this
-        .toDateTimeNoTime()
+        .toDateTime()
         .toInstant(timeZone)
-        .until(time.toDateTimeNoTime().toInstant(timeZone), unit, timeZone)
+        .until(time.toDateTime().toInstant(timeZone), unit, timeZone)
 }
 
-fun LocalTime.toDateTimeNoTime(): LocalDateTime{
+fun LocalTime.toDateTime(): LocalDateTime{
     return this.atDate(0,1,1)
 }

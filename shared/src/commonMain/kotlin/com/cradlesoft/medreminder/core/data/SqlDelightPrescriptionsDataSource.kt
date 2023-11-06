@@ -85,6 +85,8 @@ class SqlDelightPrescriptionsDataSource(
     override suspend fun updatePrescription(prescription: Prescription) {
         prescription.id?.let {
             queries.updatePresctiption(prescription.name, it)
+            queries.deleteMedicines()
+            queries.deleteSchedules()
         }
         val medicines = prescription.medicines
         for (medicine in medicines) {

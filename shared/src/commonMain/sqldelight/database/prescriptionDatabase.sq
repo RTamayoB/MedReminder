@@ -83,6 +83,8 @@ UPDATE medicineEntity SET name = :name, type = :type WHERE id = :id;
 deleteMedicine:
 DELETE FROM medicineEntity WHERE id = :id;
 
+deleteMedicines:
+DELETE FROM medicineEntity;
 
 getAllSchedules:
 SELECT * FROM scheduleEntity;
@@ -104,3 +106,6 @@ UPDATE scheduleEntity SET hour = :hour, dosage = :intake_amount WHERE id = :id;
 
 deleteSchedule:
 DELETE FROM scheduleEntity WHERE id = :id;
+
+deleteSchedules:
+DELETE FROM scheduleEntity;
