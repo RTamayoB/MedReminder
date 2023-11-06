@@ -22,11 +22,11 @@ CREATE TABLE medicineEntity (
     FOREIGN KEY (prescription_id) REFERENCES prescriptionEntity(id)
 );
 
-CREATE TABLE intakeEntity (
+CREATE TABLE scheduleEntity (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     medicine_id INTEGER,
     hour TEXT NOT NULL,
-    intake_amount REAL NOT NULL,
+    dosage REAL NOT NULL,
     FOREIGN KEY (medicine_id) REFERENCES medicineEntity(id)
 );
 
@@ -84,23 +84,23 @@ deleteMedicine:
 DELETE FROM medicineEntity WHERE id = :id;
 
 
-getAllIntakes:
-SELECT * FROM intakeEntity;
+getAllSchedules:
+SELECT * FROM scheduleEntity;
 
-getIntakeById:
-SELECT * FROM intakeEntity WHERE id = ?;
+getScheduleById:
+SELECT * FROM scheduleEntity WHERE id = ?;
 
-getIntakesByMedicineId:
-SELECT * FROM intakeEntity WHERE medicine_id = ?;
+getSchedulesByMedicineId:
+SELECT * FROM scheduleEntity WHERE medicine_id = ?;
 
-getIntakeByMedicine:
-SELECT * FROM intakeEntity WHERE medicine_id = ?;
+getSchedulesByMedicine:
+SELECT * FROM scheduleEntity WHERE medicine_id = ?;
 
-insertIntake:
-INSERT OR REPLACE INTO intakeEntity (id, medicine_id, hour, intake_amount)VALUES (?,?,?,?);
+insertSchedule:
+INSERT OR REPLACE INTO scheduleEntity (id, medicine_id, hour, dosage)VALUES (?,?,?,?);
 
-updateIntake:
-UPDATE intakeEntity SET hour = :hour, intake_amount = :intake_amount WHERE id = :id;
+updateSchedule:
+UPDATE scheduleEntity SET hour = :hour, dosage = :intake_amount WHERE id = :id;
 
-deleteIntake:
-DELETE FROM intakeEntity WHERE id = :id;
+deleteSchedule:
+DELETE FROM scheduleEntity WHERE id = :id;

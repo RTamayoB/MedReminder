@@ -7,12 +7,12 @@ data class Prescription(
     val medicines: List<Medicine> = emptyList()
 ) {
     fun getTotalIntake(): Float {
-        var totalIntake = 0.0F
+        var totalDosage = 0.0F
         for (medicine in medicines) {
-            for (intake in medicine.intakes) {
-                totalIntake += intake.intakeAmount
+            for (schedule in medicine.schedules) {
+                totalDosage += schedule.dosage
             }
         }
-        return totalIntake / 100F
+        return totalDosage / 100F
     }
 }

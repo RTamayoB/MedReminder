@@ -40,8 +40,8 @@ import com.cradlesoft.medreminder.android.presciption.components.PrescriptionFor
 import com.cradlesoft.medreminder.core.domain.models.Medicine
 import com.cradlesoft.medreminder.core.domain.models.MedicineType
 import com.cradlesoft.medreminder.core.domain.models.Prescription
-import com.cradlesoft.medreminder.prescription.IntakeMethod
 import com.cradlesoft.medreminder.prescription.MedicineBuilder
+import com.cradlesoft.medreminder.prescription.ScheduleMethod
 import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailEvent
 import com.cradlesoft.medreminder.prescription.detail.ui.PrescriptionDetailState
 
@@ -245,7 +245,7 @@ fun SimpleMedicineDialog(
         mutableStateOf(MedicineBuilder())
     }
     var method by remember {
-        mutableStateOf(IntakeMethod.Interval(0))
+        mutableStateOf(ScheduleMethod.Interval(0))
     }
     val textFieldSizeModifier = Modifier.width(60.dp)
     AlertDialog(
@@ -293,9 +293,9 @@ fun SimpleMedicineDialog(
                 ) {
                     Text(text = "Tomar", modifier = Modifier.padding(8.dp))
                     TextField(
-                        value = newMedicine.commonIntake.toString(),
+                        value = newMedicine.commonDosage.toString(),
                         onValueChange = {
-                            newMedicine = newMedicine.copy(commonIntake = it.toFloatOrNull() ?: 0.0F)
+                            newMedicine = newMedicine.copy(commonDosage = it.toFloatOrNull() ?: 0.0F)
                         },
                         modifier = textFieldSizeModifier,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)

@@ -1,14 +1,14 @@
 package com.cradlesoft.medreminder.core.domain
 
 import com.cradlesoft.medreminder.core.domain.models.Doctor
-import com.cradlesoft.medreminder.core.domain.models.Intake
+import com.cradlesoft.medreminder.core.domain.models.Schedule
 import com.cradlesoft.medreminder.core.domain.models.Medicine
 import com.cradlesoft.medreminder.core.domain.models.MedicineType
 import com.cradlesoft.medreminder.core.domain.models.Prescription
 import database.DoctorEntity
-import database.IntakeEntity
 import database.MedicineEntity
 import database.PrescriptionEntity
+import database.ScheduleEntity
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
@@ -47,7 +47,7 @@ fun MedicineEntity.toMedicine(): Medicine {
         method = method,
         startOfIntake = LocalDate.parse(start_intake),
         endOfIntake = LocalDate.parse(end_intake),
-        intakes = emptyList()
+        schedules = emptyList()
     )
 }
 
@@ -55,14 +55,14 @@ fun List<MedicineEntity>.toMedicines(): List<Medicine> {
     return map { it.toMedicine() }
 }
 
-fun IntakeEntity.toIntake(): Intake {
-    return Intake(
+fun ScheduleEntity.toSchedule(): Schedule {
+    return Schedule(
         id = id,
         hour = LocalTime.parse(hour),
-        intakeAmount = intake_amount.toFloat()
+        dosage = dosage.toFloat()
     )
 }
 
-fun List<IntakeEntity>.toIntakes(): List<Intake> {
-    return map { it.toIntake() }
+fun List<ScheduleEntity>.toSchedules(): List<Schedule> {
+    return map { it.toSchedule() }
 }

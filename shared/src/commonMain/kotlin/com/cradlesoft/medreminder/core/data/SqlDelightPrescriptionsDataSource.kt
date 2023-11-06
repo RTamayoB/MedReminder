@@ -7,9 +7,9 @@ import com.cradlesoft.medreminder.core.domain.PrescriptionsDataSource
 import com.cradlesoft.medreminder.core.domain.models.Doctor
 import com.cradlesoft.medreminder.core.domain.models.Prescription
 import com.cradlesoft.medreminder.core.domain.toDoctor
-import com.cradlesoft.medreminder.core.domain.toIntakes
 import com.cradlesoft.medreminder.core.domain.toMedicines
 import com.cradlesoft.medreminder.core.domain.toPrescription
+import com.cradlesoft.medreminder.core.domain.toSchedules
 import com.cradlesoft.medreminder.database.PrescriptionsDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -42,9 +42,9 @@ class SqlDelightPrescriptionsDataSource(
                             .executeAsList()
                             .toMedicines().map { medicine ->
                                 medicine.copy(
-                                    intakes = queries.getIntakesByMedicineId(medicine.id)
+                                    schedules = queries.getSchedulesByMedicineId(medicine.id)
                                         .executeAsList()
-                                        .toIntakes()
+                                        .toSchedules()
                                 )
                             }
                     )
@@ -63,9 +63,9 @@ class SqlDelightPrescriptionsDataSource(
                         .executeAsList()
                         .toMedicines().map { medicine ->
                             medicine.copy(
-                                intakes = queries.getIntakesByMedicineId(medicine.id)
+                                schedules = queries.getSchedulesByMedicineId(medicine.id)
                                     .executeAsList()
-                                    .toIntakes()
+                                    .toSchedules()
                             )
                         }
                 )
@@ -98,12 +98,12 @@ class SqlDelightPrescriptionsDataSource(
                 end_intake = medicine.endOfIntake.toString()
             )
             val medicineId = queries.lastInsertRowId().executeAsOneOrNull()
-            for (intake in medicine.intakes) {
-                queries.insertIntake(
+            for (intake in medicine.schedules) {
+                queries.insertSchedule(
                     id = intake.id,
                     medicine_id = medicineId,
                     hour = intake.hour.toString(),
-                    intake_amount = intake.intakeAmount.toDouble()
+                    dosage = intake.dosage.toDouble()
                 )
             }
         }

@@ -19,7 +19,7 @@ data class Medicine(
     val endOfIntake: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.plus(
         DatePeriod(days = 5)
     ),
-    val intakes: List<Intake> = emptyList()
+    val schedules: List<Schedule> = emptyList()
 ) {
     fun getPeriodInDays(): Int {
         return startOfIntake.daysUntil(endOfIntake)
@@ -27,14 +27,14 @@ data class Medicine(
 
     fun getNextIntake(): String? {
         val currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
-        if (intakes.isEmpty()) {
+        if (schedules.isEmpty()) {
             return null
         }
 
-        var closestIntake = intakes.first()
+        var closestIntake = schedules.first()
         var timeDiff = currentTime.timeBetween(closestIntake.hour, DateTimeUnit.MINUTE)
 
-        for (intake in intakes) {
+        for (intake in schedules) {
             val diff = currentTime.timeBetween(intake.hour, DateTimeUnit.MINUTE)
             if (diff < 0) {
                 continue

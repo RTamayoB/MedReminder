@@ -126,8 +126,8 @@ fun AddMedicineDialog(
                     )
                 }
                 LazyColumn {
-                    items(medicine.intakes) { intake ->
-                        Text(text = "${intake.hour} - ${intake.intakeAmount}")
+                    items(medicine.schedules) { schedule ->
+                        Text(text = "${schedule.hour} - ${schedule.dosage}")
                     }
                 }
             }
