@@ -34,6 +34,7 @@ import com.cradlesoft.medreminder.android.R
 import com.cradlesoft.medreminder.android.core.ui.components.FloatInputStepper
 import com.cradlesoft.medreminder.android.core.ui.components.InputSelector
 import com.cradlesoft.medreminder.android.core.ui.components.InputText
+import com.cradlesoft.medreminder.android.core.ui.components.InputValue
 import com.cradlesoft.medreminder.android.core.ui.components.IntegerInputStepper
 import com.cradlesoft.medreminder.android.core.ui.components.LongInputStepper
 import com.cradlesoft.medreminder.android.presciption.components.AddMedicineDialog
@@ -185,6 +186,11 @@ fun PrescriptionDetail(
     Column(
         modifier = modifier
     ) {
+        InputValue(
+            value = "Dr. Martinez",
+            modifier = Modifier.padding(8.dp),
+            label = "Doctor"
+        )
         Text(text = "Medicinas", modifier = Modifier.padding(8.dp))
         Divider()
         LazyColumn {
