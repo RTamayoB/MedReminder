@@ -1,13 +1,13 @@
 package com.cradlesoft.medreminder.android.presciption.detail
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.ArrowBack
@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,11 +29,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.cradlesoft.medreminder.android.R
+import com.cradlesoft.medreminder.android.core.ui.components.FloatInputStepper
 import com.cradlesoft.medreminder.android.core.ui.components.InputSelector
-import com.cradlesoft.medreminder.android.core.ui.components.InputStepper
+import com.cradlesoft.medreminder.android.core.ui.components.InputText
+import com.cradlesoft.medreminder.android.core.ui.components.IntegerInputStepper
+import com.cradlesoft.medreminder.android.core.ui.components.LongInputStepper
 import com.cradlesoft.medreminder.android.presciption.components.AddMedicineDialog
 import com.cradlesoft.medreminder.android.presciption.components.MedicineInlineItem
 import com.cradlesoft.medreminder.android.presciption.components.PrescriptionForm
@@ -277,13 +278,14 @@ fun SimpleMedicineDialog(
         title = { Text(text = "Agregar Medicina")},
         text = {
             Column {
-                TextField(
+                InputText(
                     value = newMedicine.name,
                     onValueChange = {
                         newMedicine = newMedicine.copy(name = it)
                     },
-                    modifier = Modifier.padding(8.dp),
-                    label = { Text(text = "Nombre de la Medicina")}
+                    label = "Nombre de la Medicina",
+                    placeholder = { Text(text = "Paracetamol")},
+                    modifier = Modifier.padding(8.dp)
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -296,45 +298,48 @@ fun SimpleMedicineDialog(
                         },
                         label = "Presentacion",
                         modifier = Modifier
-                            .padding(8.dp).weight(.5F)
+                            .padding(8.dp)
+                            .weight(.5F)
                     )
-                    InputStepper(
-                        value = newMedicine.commonDosage.toString(),
+                    FloatInputStepper(
+                        value = newMedicine.commonDosage,
                         label = "Cantidad",
                         onValueChange = {
-                            newMedicine = newMedicine.copy(commonDosage = it.toFloatOrNull() ?: 0.0F)
+                            newMedicine = newMedicine.copy(commonDosage = it)
                         },
                         textFieldModifier = textFieldSizeModifier,
-                        modifier = Modifier.padding(8.dp).weight(.5F)
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .weight(.5F)
                     )
                 }
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Text(text = "Cada", modifier = Modifier.padding(8.dp))
-                    TextField(
-                        value = method.interval.toString(),
+                    LongInputStepper(
+                        value = method.interval,
                         onValueChange = {
-                            method = method.copy(
-                                interval = it.toLongOrNull() ?: 0
-                            )
+                            method = method.copy(interval = it)
                         },
-                        modifier = textFieldSizeModifier,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        textFieldModifier = textFieldSizeModifier,
+                        modifier = Modifier.padding(8.dp)
                     )
                     Text(text = "Horas", modifier = Modifier.padding(8.dp))
                 }
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Text(text = "Por", modifier = Modifier.padding(8.dp))
-                    TextField(
-                        value = newMedicine.days.toString(),
+                    IntegerInputStepper(
+                        value = newMedicine.days,
                         onValueChange = {
-                            newMedicine = newMedicine.copy(days = it.toIntOrNull() ?: 0)
+                            newMedicine = newMedicine.copy(days = it)
                         },
-                        modifier = textFieldSizeModifier,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        textFieldModifier = textFieldSizeModifier,
+                        modifier = Modifier.padding(8.dp)
                     )
                     Text(text = "Dias", modifier = Modifier.padding(8.dp))
                 }

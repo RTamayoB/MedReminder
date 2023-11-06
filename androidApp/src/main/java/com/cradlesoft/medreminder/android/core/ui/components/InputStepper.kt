@@ -21,6 +21,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,9 +34,108 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun InputStepper(
-    value: String,
-    onValueChange: (String) -> Unit,
+fun IntegerInputStepper(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    textFieldModifier: Modifier = Modifier,
+    label: String? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = false,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = 1,
+    allowNegatives: Boolean = false
+) {
+    InputStepperBase(
+        value = value,
+        onValueChange = {
+            onValueChange(it.toInt())
+        },
+        modifier = modifier,
+        textFieldModifier = textFieldModifier,
+        label = label,
+        trailingIcon = trailingIcon,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        singleLine = singleLine,
+        maxLines = maxLines,
+        minLines = minLines,
+        allowNegatives = allowNegatives
+    )
+}
+
+@Composable
+fun FloatInputStepper(
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+    textFieldModifier: Modifier = Modifier,
+    label: String? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = false,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = 1,
+    allowNegatives: Boolean = false
+) {
+    InputStepperBase(
+        value = value,
+        onValueChange = {
+            onValueChange(it.toFloat())
+        },
+        modifier = modifier,
+        textFieldModifier = textFieldModifier,
+        label = label,
+        trailingIcon = trailingIcon,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        singleLine = singleLine,
+        maxLines = maxLines,
+        minLines = minLines,
+        allowNegatives = allowNegatives
+    )
+}
+
+@Composable
+fun LongInputStepper(
+    value: Long,
+    onValueChange: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+    textFieldModifier: Modifier = Modifier,
+    label: String? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = false,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = 1,
+    allowNegatives: Boolean = false
+) {
+    InputStepperBase(
+        value = value,
+        onValueChange = {
+            onValueChange(it.toLong())
+        },
+        modifier = modifier,
+        textFieldModifier = textFieldModifier,
+        label = label,
+        trailingIcon = trailingIcon,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        singleLine = singleLine,
+        maxLines = maxLines,
+        minLines = minLines,
+        allowNegatives = allowNegatives
+    )
+}
+
+@Composable
+internal fun InputStepperBase(
+    value: Number,
+    onValueChange: (Number) -> Unit,
     modifier: Modifier = Modifier,
     textFieldModifier: Modifier = Modifier,
     label: String? = null,
@@ -60,9 +161,9 @@ fun InputStepper(
     ) {
         Row {
             OutlinedTextField(
-                value = value,
+                value = value.toString(),
                 onValueChange = {
-                   if (it.isEmpty()) onValueChange("0.0") else onValueChange(it)
+                    onValueChange(it.toFloat())
                 },
                 trailingIcon = trailingIcon,
                 keyboardOptions = keyboardOptions.copy(keyboardType = KeyboardType.Number),
@@ -89,7 +190,9 @@ fun InputStepper(
                     )
             ) {
                 IconButton(
-                    onClick = { onValueChange(String.format("%.1f", value.toFloat().plus(1))) },
+                    onClick = {
+                        onValueChange(value.toFloat().plus(1))
+                    },
                     modifier = Modifier.height(TextFieldDefaults.MinHeight / 2)
                 ) {
                     Icon(
@@ -103,10 +206,10 @@ fun InputStepper(
                     onClick = {
                         if (value.toFloat().minus(1) < 0) {
                             if (allowNegatives) {
-                                onValueChange(String.format("%.1f", value.toFloat().minus(1)))
+                                onValueChange(value.toFloat().minus(1))
                             }
                         } else {
-                            onValueChange(String.format("%.1f", value.toFloat().minus(1)))
+                            onValueChange(value.toFloat().minus(1))
                         }
                     },
                     modifier = Modifier.height(TextFieldDefaults.MinHeight / 2)
@@ -124,11 +227,26 @@ fun InputStepper(
 
 @Preview
 @Composable
-fun InputStepperPreview() {
+fun IntegerInputStepperPreview() {
     var inputValue by remember {
-        mutableStateOf("1.0")
+        mutableIntStateOf(1)
     }
-    InputStepper(
+    IntegerInputStepper(
+        value = inputValue,
+        textFieldModifier = Modifier.width(60.dp),
+        onValueChange = {
+            inputValue = it
+        }
+    )
+}
+
+@Preview
+@Composable
+fun FloatInputStepperPreview() {
+    var inputValue by remember {
+        mutableFloatStateOf(1.0F)
+    }
+    FloatInputStepper(
         value = inputValue,
         textFieldModifier = Modifier.width(60.dp),
         onValueChange = {
