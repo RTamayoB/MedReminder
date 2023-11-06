@@ -23,11 +23,6 @@ class PrescriptionListViewModel(
 
     fun onEvent(event: PrescriptionListEvent) {
         when (event) {
-            is PrescriptionListEvent.CreateMockPrescription -> {
-                viewModelScope.launch {
-                    prescriptionsDataSource.insertPrescription(event.newPrescription)
-                }
-            }
             is PrescriptionListEvent.GetPrescriptions -> {
                 getPrescriptions()
             }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -14,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.cradlesoft.medreminder.android.presciption.list.components.PrescriptionListItem
-import com.cradlesoft.medreminder.core.domain.models.Prescription
 import com.cradlesoft.medreminder.prescription.list.ui.PrescriptionListEvent
 import com.cradlesoft.medreminder.prescription.list.ui.PrescriptionListState
 
@@ -49,29 +47,6 @@ fun PrescriptionsListScreen(
                     }
                 )
             }
-            item {
-                Button(onClick = {
-                    onEvent(
-                        PrescriptionListEvent.CreateMockPrescription(
-                            Prescription(
-                                name = "Test 2",
-                                doctor = null,
-                                medicines = emptyList()
-                            )
-                        )
-                    )
-                }) {
-                    Text(text = "Insert")
-                }
-            }
-            /*items(mockPresctiptions) { prescriptionItem ->
-                PrescriptionListItem(
-                    prescription = prescriptionItem,
-                    onPrescriptionClicked = { prescriptionClicked ->
-                        onNavigateToPrescriptionDetails(prescriptionClicked.name)
-                    }x
-                )
-            }*/
         }
     }
 
