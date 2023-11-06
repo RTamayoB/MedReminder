@@ -1,7 +1,6 @@
 package com.cradlesoft.medreminder.core.utils
 
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -12,8 +11,9 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.until
 
+val timeZone = TimeZone.currentSystemDefault()
+
 fun LocalDateTime.plus(value: Long, unit: DateTimeUnit): LocalDateTime {
-    val timeZone = TimeZone.currentSystemDefault()
     return this
         .toInstant(timeZone)
         .plus(value, unit, timeZone)
@@ -21,7 +21,6 @@ fun LocalDateTime.plus(value: Long, unit: DateTimeUnit): LocalDateTime {
 }
 
 fun LocalTime.plus(value: Long, unit: DateTimeUnit.TimeBased): LocalTime {
-    val timeZone = TimeZone.currentSystemDefault()
     return this
         .toDateTimeNoTime()
         .toInstant(timeZone)
@@ -31,7 +30,6 @@ fun LocalTime.plus(value: Long, unit: DateTimeUnit.TimeBased): LocalTime {
 }
 
 fun LocalTime.minus(value: Long, unit: DateTimeUnit.TimeBased): LocalTime {
-    val timeZone = TimeZone.currentSystemDefault()
     return this
         .toDateTimeNoTime()
         .toInstant(timeZone)
@@ -41,7 +39,6 @@ fun LocalTime.minus(value: Long, unit: DateTimeUnit.TimeBased): LocalTime {
 }
 
 fun LocalTime.timeBetween(time: LocalTime, unit: DateTimeUnit): Long{
-    val timeZone = TimeZone.currentSystemDefault()
     return this
         .toDateTimeNoTime()
         .toInstant(timeZone)

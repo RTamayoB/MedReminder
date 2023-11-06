@@ -49,7 +49,7 @@ fun MedicineInlineItem(
             Column {
                 Text(text = medicine.name)
                 //TODO: Set intake instructions correctly
-                Text(text = "siguiente toma: ${medicine.getNextIntake() ?: "mañana"}")
+                Text(text = "siguiente toma: ${medicine.getNextSchedule() ?: "mañana"}")
                 Text(text = " por ${medicine.getPeriodInDays()} dias")
             }
         }

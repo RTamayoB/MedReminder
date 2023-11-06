@@ -25,27 +25,24 @@ data class Medicine(
         return startOfIntake.daysUntil(endOfIntake)
     }
 
-    fun getNextIntake(): String? {
+    fun getNextSchedule(): String? {
         val currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
         if (schedules.isEmpty()) {
             return null
         }
 
-        var closestIntake = schedules.first()
-        var timeDiff = currentTime.timeBetween(closestIntake.hour, DateTimeUnit.MINUTE)
+        var closestSchedule = schedules.first()
+        var currentTimeDiff = currentTime.timeBetween(closestSchedule.hour, DateTimeUnit.MINUTE)
 
-        for (intake in schedules) {
-            val diff = currentTime.timeBetween(intake.hour, DateTimeUnit.MINUTE)
-            if (diff < 0) {
-                continue
+        for (schedule in schedules) {
+            val newDiff = currentTime.timeBetween(schedule.hour, DateTimeUnit.MINUTE)
+            if (newDiff > currentTimeDiff && newDiff > 0) {
+                closestSchedule = schedule
             }
-
-            if (diff < timeDiff) {
-                closestIntake = intake
-                timeDiff = diff
-            }
+            currentTimeDiff = newDiff
         }
-        return closestIntake.hour.toString()
+
+        return closestSchedule.hour.toString()
     }
 }
 
