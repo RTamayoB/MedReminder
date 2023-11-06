@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.cradlesoft.medreminder.android.R
 import com.cradlesoft.medreminder.android.core.ui.components.InputSelector
+import com.cradlesoft.medreminder.android.core.ui.components.InputStepper
 import com.cradlesoft.medreminder.android.presciption.components.AddMedicineDialog
 import com.cradlesoft.medreminder.android.presciption.components.MedicineInlineItem
 import com.cradlesoft.medreminder.android.presciption.components.PrescriptionForm
@@ -284,27 +285,27 @@ fun SimpleMedicineDialog(
                     modifier = Modifier.padding(8.dp),
                     label = { Text(text = "Nombre de la Medicina")}
                 )
-                InputSelector(
-                    options = MedicineType.values().toList(),
-                    selectedOption = newMedicine.type,
-                    onOptionSelected = {
-                        newMedicine = newMedicine.copy(type = it)
-                    },
-                    label = "Tipo de Medicamento",
-                    modifier = Modifier
-                        .padding(8.dp)
-                )
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Tomar", modifier = Modifier.padding(8.dp))
-                    TextField(
+                    InputSelector(
+                        options = MedicineType.values().toList(),
+                        selectedOption = newMedicine.type,
+                        onOptionSelected = {
+                            newMedicine = newMedicine.copy(type = it)
+                        },
+                        label = "Presentacion",
+                        modifier = Modifier
+                            .padding(8.dp).weight(.5F)
+                    )
+                    InputStepper(
                         value = newMedicine.commonDosage.toString(),
+                        label = "Cantidad",
                         onValueChange = {
                             newMedicine = newMedicine.copy(commonDosage = it.toFloatOrNull() ?: 0.0F)
                         },
-                        modifier = textFieldSizeModifier,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                        textFieldModifier = textFieldSizeModifier,
+                        modifier = Modifier.padding(8.dp).weight(.5F)
                     )
                 }
                 Row(
