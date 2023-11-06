@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.DatePickerDialog
@@ -27,8 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -41,25 +39,9 @@ import com.cradlesoft.medreminder.core.domain.models.MedicineType
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMedicineDialog(
+    medicine: Medicine,
     onDismissRequest: () -> Unit
 ) {
-
-    //TODO: Add a source of truth / ViewModel
-    var newMedicine = Medicine()
-    val options = listOf(
-        "Tabletas",
-        "Pastillas",
-        "Gotas",
-        "Solución",
-        "Inyección"
-    )
-    var mg by remember {
-        mutableStateOf("10")
-    }
-
-    var tempMedicineName by remember {
-        mutableStateOf("")
-    }
 
     var openDate by remember {
         mutableStateOf(false)
@@ -94,16 +76,16 @@ fun AddMedicineDialog(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     InputText(
-                        value = tempMedicineName,
-                        onValueChange = { tempMedicineName = it },
-                        label = newMedicine.name,
+                        value = medicine.name,
+                        onValueChange = {  },
+                        label = "Nombre de Medicina",
                         modifier = Modifier
                             .padding(8.dp)
                             .weight(.6F)
                     )
                     InputSelector(
                         options = MedicineType.values().toList(),
-                        selectedOption = newMedicine.type,
+                        selectedOption = medicine.type,
                         onOptionSelected = {
                         },
                         label = "Tipo de Medicamento",
@@ -112,30 +94,16 @@ fun AddMedicineDialog(
                             .weight(.4F)
                     )
                 }
-                InputText(
-                    value = mg,
-                    onValueChange = {
-                        mg = it
-                    },
-                    label = "Cantidad",
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
-                    modifier = Modifier.width(60.dp)
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     InputText(
-                        value = newMedicine.startOfIntake.toString(),
+                        value = medicine.startOfIntake.toString(),
                         onValueChange = {},
                         label = "Inicio",
                         trailingIcon = {
-                            IconButton(onClick = {  }) {
+                            IconButton(onClick = { openDate = true }) {
                                 Icon(painter = painterResource(id = R.drawable.ic_calendar_add), contentDescription = null)
                             }
                         },
@@ -144,7 +112,7 @@ fun AddMedicineDialog(
                             .weight(.5F)
                     )
                     InputText(
-                        value = newMedicine.endOfIntake.toString(),
+                        value = medicine.endOfIntake.toString(),
                         onValueChange = {},
                         label = "Final",
                         trailingIcon = {
@@ -156,6 +124,11 @@ fun AddMedicineDialog(
                             .padding(8.dp)
                             .weight(.5F)
                     )
+                }
+                LazyColumn {
+                    items(medicine.intakes) { intake ->
+                        Text(text = "${intake.hour} - ${intake.intakeAmount}")
+                    }
                 }
             }
         }

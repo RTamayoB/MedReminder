@@ -92,7 +92,7 @@ class SqlDelightPrescriptionsDataSource(
                 id = medicine.id,
                 prescription_id = prescription.id,
                 name = medicine.name,
-                type = medicine.type.name,
+                type = medicine.type.name.lowercase(),
                 method = medicine.method,
                 start_intake = medicine.startOfIntake.toString(),
                 end_intake = medicine.endOfIntake.toString()

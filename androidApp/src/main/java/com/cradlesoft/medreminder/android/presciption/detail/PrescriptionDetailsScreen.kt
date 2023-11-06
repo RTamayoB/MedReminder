@@ -3,8 +3,6 @@ package com.cradlesoft.medreminder.android.presciption.detail
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,8 +34,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.cradlesoft.medreminder.android.R
 import com.cradlesoft.medreminder.android.core.ui.components.InputSelector
+import com.cradlesoft.medreminder.android.presciption.components.AddMedicineDialog
 import com.cradlesoft.medreminder.android.presciption.components.MedicineInlineItem
 import com.cradlesoft.medreminder.android.presciption.components.PrescriptionForm
+import com.cradlesoft.medreminder.core.domain.models.Medicine
 import com.cradlesoft.medreminder.core.domain.models.MedicineType
 import com.cradlesoft.medreminder.core.domain.models.Prescription
 import com.cradlesoft.medreminder.prescription.IntakeMethod
@@ -52,7 +52,10 @@ fun PrescriptionDetailsScreen(
     onEvent: (PrescriptionDetailEvent) -> Unit,
     onBackPress: () -> Unit
 ) {
-    var openTestDialog by remember {
+    var detailsMedicineDialog by remember {
+        mutableStateOf(false)
+    }
+    var openAddMedicineDialog by remember {
         mutableStateOf(false)
     }
     var openQuitEditModeDialog by remember {
@@ -111,42 +114,40 @@ fun PrescriptionDetailsScreen(
                     prescription = state.prescription,
                     onNameChanged = { onEvent(PrescriptionDetailEvent.SetPrescriptionName(it)) },
                     onAddMedicineClicked = {
-                        openTestDialog = true
-                        /*onEvent(PrescriptionDetailEvent.AddMedicineToPrescription(
-                            Medicine(
-                                name = "Test Medicine",
-                                type = MedicineType.TABLETS,
-                                commonIntake = 1.0F,
-                                startOfIntake = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
-                                endOfIntake = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
-                            )
-                        ))*/
+                        openAddMedicineDialog = true
                     },
                     modifier = Modifier.padding(paddingValues)
                 )
             } else {
                 PrescriptionDetail(
                     prescription = state.prescription,
+                    onMedicineClicked = {
+                        onEvent(PrescriptionDetailEvent.OpenMedicine(it))
+                        detailsMedicineDialog = true
+                    },
                     modifier = Modifier.padding(paddingValues)
                 )
             }
         }
     }
-    if (openTestDialog) {
+    if (detailsMedicineDialog) {
+        AddMedicineDialog(
+            medicine = state.selectedMedicine ?: Medicine(),
+            onDismissRequest = {
+                detailsMedicineDialog = false
+            }
+        )
+    }
+    if (openAddMedicineDialog) {
         SimpleMedicineDialog(
             onDismissRequest = {
-                openTestDialog = false
+                openAddMedicineDialog = false
                                },
             onConfirmButtonClick = {
                 onEvent(PrescriptionDetailEvent.AddMedicineToPrescription(it))
-                openTestDialog = false
+                openAddMedicineDialog = false
             },
         )
-        /*AddMedicineDialog(
-            onDismissRequest = {
-                openTestDialog = false
-            }
-        )*/
     }
     if (openQuitEditModeDialog) {
         QuitEditModeDialog(
@@ -172,22 +173,19 @@ fun PrescriptionDetailsScreen(
 @Composable
 fun PrescriptionDetail(
     prescription: Prescription,
+    onMedicineClicked: (Medicine) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
     ) {
-        TextField(value = "Marcus Andrews", onValueChange = {}, enabled = false)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "Medicinas")
+        Text(text = "Medicinas", modifier = Modifier.padding(8.dp))
         Divider()
         LazyColumn {
             items(prescription.medicines) { medicine ->
                 MedicineInlineItem(
                     medicine = medicine,
-                    onMedicineClicked = {
-
-                    }
+                    onMedicineClicked = onMedicineClicked
                 )
             }
         }

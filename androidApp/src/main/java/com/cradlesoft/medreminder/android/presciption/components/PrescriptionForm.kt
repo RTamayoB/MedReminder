@@ -13,10 +13,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -30,10 +26,6 @@ fun PrescriptionForm(
     onAddMedicineClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var doctor by remember {
-        mutableStateOf("Doctor Marcus")
-    }
-
     Column(
         modifier = modifier
     ) {
@@ -41,13 +33,6 @@ fun PrescriptionForm(
             value = prescription.name,
             onValueChange = onNameChanged,
             label = "Titulo de la Receta"
-        )
-        InputText(
-            value = doctor,
-            onValueChange = {
-                doctor = it
-            },
-            label = "Doctor Asignado"
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(text = "Medicinas")

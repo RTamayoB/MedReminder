@@ -70,6 +70,13 @@ class PrescriptionDetailViewModel(
                 }
                 updatePrescription(state.value.prescription)
             }
+            is PrescriptionDetailEvent.OpenMedicine -> {
+                _state.update {
+                    it.copy(
+                        selectedMedicine = event.selectedMedicine
+                    )
+                }
+            }
             is PrescriptionDetailEvent.DeletePrescription -> {
                 deletePrescription(state.value.prescription.id!!)
             }
